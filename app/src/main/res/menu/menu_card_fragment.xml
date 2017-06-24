@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_item_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:title="fhgfhgf"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/menu_item_swap_positions"
+        android:icon="@drawable/ic_import_export_white_24dp"
+        android:title="Swap positions"
+        app:showAsAction="always"
+        />
+    <!--<item-->
+        <!--android:id="@+id/test3"-->
+        <!--android:icon="@drawable/ic_stop_white_24dp"-->
+        <!--android:title="Player"-->
+        <!--app:showAsAction="always"-->
+        <!--/>-->
+    <!--<item-->
+        <!--android:id="@+id/test4"-->
+        <!--android:icon="@drawable/ic_repeat_one_white_24dp"-->
+        <!--android:title="Player"-->
+        <!--app:showAsAction="always"-->
+        <!--/>-->
+    <!--<item-->
+        <!--android:id="@+id/test5"-->
+        <!--android:icon="@drawable/ic_folder_white_24dp"-->
+        <!--android:title="Player"-->
+        <!--app:showAsAction="always"-->
+        <!--/>-->
+    <!--<item-->
+        <!--android:id="@+id/test6"-->
+        <!--android:icon="@drawable/ic_stop_white_24dp"-->
+        <!--android:title="Player"-->
+        <!--app:showAsAction="always"/>-->
+
+</menu>

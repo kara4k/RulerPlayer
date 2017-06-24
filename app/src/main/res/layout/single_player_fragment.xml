@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/bg2"
+                android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/title_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/speaker_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_speaker_white_24dp"
+            android:drawablePadding="7dp"
+            android:padding="@dimen/dimen_default"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"/>
+        <TextView
+            android:id="@+id/headset_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:drawableLeft="@drawable/ic_headset_white_24dp"
+            android:drawablePadding="7dp"
+            android:gravity="center"
+            android:padding="@dimen/dimen_default"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"/>
+
+        <TextView
+            android:id="@+id/volume_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_volume_up_white_24dp"
+            android:drawablePadding="7dp"
+            android:gravity="center"
+            android:padding="@dimen/dimen_default"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"/>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/track_name_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:ellipsize="end"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        android:paddingLeft="@dimen/dimen_default"
+        android:paddingRight="@dimen/dimen_default"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:lines="3"
+        android:text="Never wish you dieNever wish you die"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/artist_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dimen_default"
+        android:layout_toRightOf="@+id/play_image_button"
+        android:layout_below="@+id/track_name_text_view"
+        android:layout_marginRight="@dimen/dimen_default"
+        android:lines="2"
+        android:ellipsize="end"
+        android:gravity="right"
+        android:paddingRight="@dimen/dimen_default"
+        android:text="Mr.Oizo"
+        android:textStyle="italic"
+        android:textColor="@android:color/white"/>
+
+
+    <com.kara4k.moozic.RulerView
+        android:id="@+id/ruler_view"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:seekbar="@+id/seek_bar"
+        app:is_draw_zero="true"
+        android:layout_above="@+id/cycle_layout"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        />
+    <com.kara4k.moozic.RulerCycleView
+        android:id="@+id/ruler_cycle_view"
+        android:layout_above="@+id/seek_bar"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        app:seekbar="@id/seek_bar"
+        android:layout_height="40dp"/>
+
+    <SeekBar
+        android:id="@+id/seek_bar"
+        style="?attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ruler_view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        android:max="250000"
+        android:maxHeight="15dp"
+        android:minHeight="15dp"
+        android:paddingLeft="@dimen/dimen_default"
+        android:paddingRight="@dimen/dimen_default"
+        android:progress="25"
+        android:progressDrawable="@drawable/seekbar_progress_drawable"
+        android:thumb="@drawable/seekbar_thumb"/>
+
+    <LinearLayout
+        android:id="@+id/duration_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dimen_default"
+        android:layout_above="@+id/ruler_cycle_view"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/progress_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/dimen_default"
+            android:text="0:00"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/dimen_default"
+            android:text="|"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/duration_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/dimen_default"
+            android:text="4:40"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            />
+
+
+    </LinearLayout>
+
+
+    <ImageButton
+        android:id="@+id/play_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="@dimen/dimen_default"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
+        android:src="@drawable/ic_play_arrow_white_48dp"/>
+
+    <ImageButton
+        android:id="@+id/prev_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="36dp"
+        android:layout_marginLeft="50dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
+        android:src="@drawable/ic_skip_previous_white_36dp"/>
+
+    <ImageButton
+        android:id="@+id/next_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="36dp"
+        android:layout_marginRight="50dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="10dp"
+        android:src="@drawable/ic_skip_next_white_36dp"/>
+
+    <LinearLayout
+        android:id="@+id/cycle_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_above="@+id/play_image_button"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/start_cycle_button"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:text="Start"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/finish_cycle_button"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:text="Finish"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+</RelativeLayout>

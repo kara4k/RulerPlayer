@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/play_btn"
+        android:icon="@drawable/ic_play_arrow_white_24dp"
+        android:title="Play"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/pause_btn"
+        android:icon="@drawable/ic_pause_white_24dp"
+        android:title="Pause"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/stop_btn"
+        android:icon="@drawable/ic_stop_white_24dp"
+        android:title="Stop"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/repeat_mode"
+        android:icon="@drawable/ic_repeat_one_white_24dp"
+        android:title="Repeat mode"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/sort_btn"
+        android:icon="@drawable/ic_sort_white_24dp"
+        android:title="Sort"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/folders_btn"
+        android:icon="@drawable/ic_folder_special_white_24dp"
+        android:title="Favourites"
+        app:showAsAction="always"/>
+
+</menu>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/fragment_navigation_group"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navigation_item_card_fragment"
+            android:icon="@android:drawable/ic_media_play"
+            android:title="Player"
+            />
+        <item
+            android:id="@+id/test2"
+            android:icon="@android:drawable/ic_media_play"
+            android:title="Player"
+            />
+
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_instagram"-->
+            <!--android:icon="@drawable/ic_action_instagram"-->
+            <!--android:title="@string/navigation_menu_instagram"-->
+            <!--/>-->
+
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_twitter"-->
+            <!--android:icon="@drawable/ic_twitter_24dp"-->
+            <!--android:title="@string/navigation_menu_twitter"-->
+
+            <!--/>-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_flickr"-->
+            <!--android:icon="@drawable/ic_action_flickr"-->
+            <!--android:title="@string/navigation_menu_flickr"-->
+            <!--/>-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_tumblr"-->
+            <!--android:icon="@drawable/ic_tumblr_24dp"-->
+            <!--android:title="@string/navigation_menu_tumblr"-->
+            <!--/>-->
+
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_settings"-->
+            <!--android:icon="@drawable/ic_settings_white_24dp"-->
+            <!--android:title="@string/navigation_menu_settings"-->
+            <!--android:checkable="false"-->
+            <!--/>-->
+    </group>
+
+    <!--<group-->
+        <!--android:id="@+id/external_navigation_group"-->
+        <!--android:checkableBehavior="none">-->
+
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_rate_item"-->
+            <!--android:icon="@drawable/ic_star_half_white_24dp"-->
+            <!--android:title="@string/navigation_menu_rate_item"/>-->
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_share_item"-->
+            <!--android:icon="@drawable/ic_share_white_24dp"-->
+            <!--android:title="@string/navigation_menu_share_item"/>-->
+
+    <!--</group>-->
+</menu>

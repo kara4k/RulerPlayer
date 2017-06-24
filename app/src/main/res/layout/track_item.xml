@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:background="@drawable/selectable_item_background"
+                android:padding="12dp">
+
+    <TextView
+        android:id="@+id/track_name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/duration_text_view"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/duration_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:textStyle="bold"
+        android:layout_toLeftOf="@+id/folder_image_view"
+        android:textColor="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/artist_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/track_name_text_view"
+        android:layout_toLeftOf="@+id/extension_text_view"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/white"
+        />
+
+    <TextView
+        android:id="@+id/extension_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/artist_text_view"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/duration_text_view"
+        android:layout_marginLeft="@dimen/dimen_default"
+
+        />
+
+    <ImageView
+        android:id="@+id/folder_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/ic_folder_white_24dp"
+        android:visibility="gone"/>
+
+</RelativeLayout>
