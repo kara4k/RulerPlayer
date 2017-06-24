@@ -21,10 +21,7 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPlayer = new Player(this);
-
-
     }
-
 
     @Override
     protected Fragment getFirstFragment() {

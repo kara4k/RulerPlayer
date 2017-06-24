@@ -1,19 +1,65 @@
 package com.kara4k.moozic;
 
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.view.ContextThemeWrapper;
+import android.support.v7.widget.ActionMenuView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public abstract class MusicFragment<ADAPTER extends SelectableAdapter, ITEM extends SearchableItem>
-        extends Fragment {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public abstract class MusicFragment extends Fragment implements
+        Player.PlayerListCallback, SearchView.OnQueryTextListener {
+
+
+    public static final int SORT_BY_NAME = 1;
+    public static final int SORT_BY_ARTIST = 2;
+    public static final int SORT_BY_DATE = 3;
+    public static final int SORT_BY_TYPE = 4;
 
     protected ActionMode mActionMode;
     protected ActionMode.Callback mModeCallback;
     private ActionModeListener mModeListener;
+
+    protected CardFragment.CardCallbacks mCardCallbacks;
+
+    protected View mView;
+    protected RecyclerView mRecyclerView;
+    protected LinearLayoutManager mLayoutManager;
+    protected TracksAdapter mTracksAdapter;
+    protected ActionMenuView mBottomBar;
+    protected SearchView mSearchView;
+
+    protected TrackItem mCurrentTrack;
+
+    private boolean mIsViewLoaded = false;
+    protected boolean mIsSwapMode = false;
 
     public interface ActionModeListener {
         void onActionModeStart();
@@ -21,14 +67,310 @@ public abstract class MusicFragment<ADAPTER extends SelectableAdapter, ITEM exte
         void onActionModeFinish();
     }
 
-    abstract ADAPTER getADAPTER();
+    interface CardCallbacks {
+
+        void onPlay(TrackItem trackItem);
+
+        void onPlayPressed(TrackItem trackItem);
+
+        void onPausePressed();
+
+        void onStopPressed();
+
+    }
+
+    //    abstract ADAPTER getADAPTER();
+    abstract void onCreateView();
+
+    abstract void onTrackHolderClick(TrackItem trackItem, int newPosition);
+
+    abstract int getCurrentTrackIndex();
+
+    abstract void onQuerySearchChanged(String newText);
+
+    abstract void onPlayBtnPressed();
+
+    abstract void onBackPressed();
+
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mModeCallback = getActionModeCallback();
+        mModeListener = (ActionModeListener) getActivity();
+        mCardCallbacks = (CardFragment.CardCallbacks) getActivity();
+        setActivityCallback();
+    }
+
+    private void setActivityCallback() {
+        MoozicActivity moozicActivity = (MoozicActivity) getActivity();
+        moozicActivity.setPlayerListCallback(this);
+        moozicActivity.setActivityCallback(new MoozicActivity.ActivityCallback() {
+            @Override
+            public void onBackPressed() {
+                if (isMenuVisible()) {
+                    if (!mSearchView.isIconified()) {
+                        mSearchView.setQuery(null, false);
+                        mSearchView.clearFocus();
+                        mSearchView.setIconified(true);
+                    } else {
+                        MusicFragment.this.onBackPressed();
+                    }
+                }
+            }
+
+            @Override
+            public void onMenuPressed() {
+                toggleActionBarVisibility();
+            }
+        });
+    }
+
+    private void toggleActionBarVisibility() {
+        try {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            ActionBar supportActionBar = activity.getSupportActionBar();
+            if (supportActionBar != null && supportActionBar.isShowing()) {
+                supportActionBar.hide();
+            } else if (supportActionBar != null && !supportActionBar.isShowing()) {
+                supportActionBar.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mModeCallback = getActionModeCallback();
-        mModeListener = (ActionModeListener) getActivity();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.card_fragment, container, false);
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mTracksAdapter = new TracksAdapter(new ArrayList<TrackItem>());
+        mRecyclerView.setAdapter(mTracksAdapter);
+        setupTouchHolderHelper();
+//        onBackPressed(mCurrentDir);
+        onCreateView();
+        return mView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mIsViewLoaded = true;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (isVisibleToUser && mIsViewLoaded) {
+            setActivityCallback();
+            toggleActionBarVisibility();
+        }
+    }
+
+    private void setupTouchHolderHelper() {
+        ItemTouchHelper.Callback touchHolderCallback = new TouchHolderCallback<TracksAdapter>(mTracksAdapter) {
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return mIsSwapMode;
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHolderCallback);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_card_fragment, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        mSearchView = (SearchView) searchItem.getActionView();
+        mSearchView.setOnQueryTextListener(this);
+
+        mBottomBar = (ActionMenuView) mView.findViewById(R.id.bottom_toolbar);
+        Menu bottomMenu = mBottomBar.getMenu();
+        inflater.inflate(R.menu.menu_card_controls, bottomMenu);
+
+        boolean isRepeatOne = Preferences.isRepeatOne(getContext());
+        setRepeatBtnIcon(isRepeatOne);
+
+        for (int i = 0; i < bottomMenu.size(); i++) {
+            bottomMenu.getItem(i).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    return onOptionsItemSelected(item);
+                }
+            });
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        onQuerySearchChanged(newText);
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.play_btn:
+                onPlayBtnPressed();
+                return true;
+            case R.id.pause_btn:
+                mCardCallbacks.onPausePressed();
+                return true;
+            case R.id.stop_btn:
+                mCardCallbacks.onStopPressed();
+                return true;
+            case R.id.repeat_mode:
+                boolean repeatOne = Preferences.isRepeatOne(getContext());
+                repeatOne = !repeatOne;
+                Preferences.setRepeatOne(getContext(), repeatOne);
+                setRepeatBtnIcon(repeatOne);
+                return true;
+            case R.id.sort_btn:
+                showSortDialog();
+                return true;
+            case R.id.folders_btn:
+                return true;
+            case R.id.menu_item_swap_positions:
+                mIsSwapMode = !mIsSwapMode;
+                if (mIsSwapMode) {
+                    item.setIcon(R.drawable.ic_import_export_red_24dp);
+                    Toast toast = Toast.makeText(getContext(), R.string.toast_on_swap_mode, Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                } else {
+                    item.setIcon(R.drawable.ic_import_export_white_24dp);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void showSortDialog() {
+        ContextThemeWrapper ctw = new ContextThemeWrapper(getContext(), R.style.AlertDialogStyle);
+        String[] dialogItems = getContext().getResources().getStringArray(R.array.dialog_sort_by);
+        new AlertDialog.Builder(ctw)
+                .setTitle(R.string.dialog_sort_by_title)
+                .setItems(dialogItems, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                mTracksAdapter.sortByName();
+                                break;
+                            case 1:
+                                mTracksAdapter.sortByArtist();
+                                break;
+                            case 2:
+                                mTracksAdapter.sortByDate();
+                                break;
+                            case 3:
+                                mTracksAdapter.sortByType();
+                                break;
+                        }
+                        mTracksAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null).create().show();
+    }
+
+    private void setRepeatBtnIcon(boolean repeatOne) {
+        Menu menu = mBottomBar.getMenu();
+        MenuItem item = menu.findItem(R.id.repeat_mode);
+        if (repeatOne) {
+            item.setIcon(R.drawable.ic_repeat_one_white_24dp);
+        } else {
+            item.setIcon(R.drawable.ic_repeat_white_24dp);
+        }
+    }
+
+    protected void setCurrentTrack(TrackItem trackItem) {
+        mCurrentTrack = trackItem;
+    }
+
+    public void playTrack(TrackItem trackItem, int newIndex) {
+        if (mCardCallbacks != null) {
+            int prevIndex = mTracksAdapter.getCurrentIndex();
+            setCurrentTrack(trackItem);
+            if (prevIndex != -1) {
+                mTracksAdapter.notifyItemChanged(prevIndex);
+            }
+            mTracksAdapter.notifyItemChanged(newIndex);
+
+            mCardCallbacks.onPlay(trackItem);
+        }
+    }
+
+    @Override
+    public void playNext() {
+        int currentIndex = getCurrentTrackIndex();
+        if (currentIndex == -1) return;
+        if (mTracksAdapter.getItemCount() - 1 == currentIndex) {
+            searchNext(0);
+        } else {
+            searchNext(currentIndex + 1);
+        }
+    }
+
+    private void searchNext(int startIndex) {
+        for (int i = startIndex; i < mTracksAdapter.getItemCount(); i++) {
+            TrackItem trackItem = mTracksAdapter.getAllItems().get(i);
+            if (trackItem.isTrack()) {
+                playTrack(trackItem, i);
+                mLayoutManager.scrollToPosition(i);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void playPrev() {
+        int currentIndex = getCurrentTrackIndex();
+        if (currentIndex == -1) return;
+
+        if (currentIndex == 0) {
+            searchPrevFromListEnd();
+        } else {
+            for (int i = currentIndex - 1; i > -1; i--) {
+                TrackItem trackItem = mTracksAdapter.getAllItems().get(i);
+                if (trackItem.isTrack()) {
+                    playTrack(trackItem, i);
+                    mLayoutManager.scrollToPosition(i);
+                    break;
+                }
+                if (i == 0) {
+                    searchPrevFromListEnd();
+                }
+            }
+        }
+    }
+
+    private void searchPrevFromListEnd() {
+        for (int i = mTracksAdapter.getItemCount() - 1; i > -1; i--) {
+            TrackItem trackItem = mTracksAdapter.getAllItems().get(i);
+            if (trackItem.isTrack()) {
+                playTrack(trackItem, i);
+                mLayoutManager.scrollToPosition(i);
+                break;
+            }
+        }
     }
 
     private ActionMode.Callback getActionModeCallback() {
@@ -54,11 +396,290 @@ public abstract class MusicFragment<ADAPTER extends SelectableAdapter, ITEM exte
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                getADAPTER().refreshItems();
+                mTracksAdapter.refreshItems();
                 mActionMode = null;
                 mModeListener.onActionModeFinish();
             }
         };
+    }
+
+
+    class TracksAdapter extends SelectableAdapter<TrackHolder, TrackItem> {
+
+        public TracksAdapter(List<TrackItem> list) {
+            super(list);
+            sortTrackList();
+        }
+
+        public void sortTrackList() {
+            int sortOrder = Preferences.getSortOrder(getContext());
+            switch (sortOrder) {
+                case SORT_BY_NAME:
+                    sortByName();
+                    break;
+                case SORT_BY_ARTIST:
+                    sortByArtist();
+                    break;
+                case SORT_BY_DATE:
+                    sortByDate();
+                    break;
+                case SORT_BY_TYPE:
+                    sortByType();
+                    break;
+            }
+        }
+
+        @Override
+        public TrackHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.track_item, null);
+            return new TrackHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(TrackHolder holder, int position) {
+            holder.bindItem(mITEMs.get(position));
+
+            if (mCurrentTrack != null) {
+                if (mCurrentTrack.getFile().getPath().equals(mITEMs.get(position).getFile().getPath())) {
+                    holder.itemView.setBackgroundResource(R.drawable.selectable_current_background);
+                } else {
+                    holder.itemView.setBackgroundResource(R.drawable.selectable_item_background);
+                }
+            }
+        }
+
+        @Override
+        ActionMode getActionMode() {
+            return mActionMode;
+        }
+
+
+        int getCurrentIndex() {
+            if (mCurrentTrack == null) {
+                return -1;
+            }
+
+            int index = -1;
+            for (int i = 0; i < mITEMs.size(); i++) {
+                File file = mITEMs.get(i).getFile();
+                if (file.getPath().equals(mCurrentTrack.getFile().getPath())) {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+
+        private TrackItem getCurrentTrack() {
+            int currentIndex = getCurrentIndex();
+            if (currentIndex == -1) return null;
+            return mITEMs.get(currentIndex);
+        }
+
+        public void sortByName() {
+            Collections.sort(mITEMs, new Comparator<TrackItem>() {
+                @Override
+                public int compare(TrackItem trackItem, TrackItem t1) {
+                    if (!trackItem.isTrack() && t1.isTrack()) {
+                        return -1;
+                    } else if (trackItem.isTrack() && !t1.isTrack()) {
+                        return 1;
+                    } else if (!trackItem.isTrack() && !t1.isTrack()) {
+                        return trackItem.getName().compareToIgnoreCase(t1.getName());
+                    } else if (trackItem.getTrackName() != null && t1.getTrackName() != null) {
+                        return trackItem.getTrackName().compareToIgnoreCase(t1.getTrackName());
+                    } else if (trackItem.getTrackName() == null && t1.getTrackName() != null) {
+                        return trackItem.getName().compareToIgnoreCase(t1.getTrackName());
+                    } else if (trackItem.getTrackName() != null && t1.getTrackName() == null) {
+                        return trackItem.getTrackName().compareToIgnoreCase(t1.getName());
+                    } else {
+                        return trackItem.getName().compareToIgnoreCase(t1.getName());
+                    }
+
+                }
+            });
+
+            Preferences.setSortOrder(getContext(), SORT_BY_NAME);
+        }
+
+        public void sortByArtist() {
+            Collections.sort(mITEMs, new Comparator<TrackItem>() {
+                @Override
+                public int compare(TrackItem track, TrackItem t1) {
+                    if (!track.isTrack() && t1.isTrack()) {
+                        return -1;
+                    } else if (track.isTrack() && !t1.isTrack()) {
+                        return 1;
+                    } else if (!track.isTrack() && !t1.isTrack()) {
+                        return track.getName().compareToIgnoreCase(t1.getName());
+                    } else if (track.getTrackArtist() != null && t1.getTrackArtist() != null) {
+                        return track.getTrackArtist().compareToIgnoreCase(t1.getTrackArtist());
+                    } else if (track.getTrackArtist() == null && t1.getTrackArtist() != null) {
+                        return -1;
+                    } else if (track.getTrackArtist() != null && t1.getTrackArtist() == null) {
+                        return 1;
+                    } else {
+                        return track.getName().compareToIgnoreCase(t1.getName());
+                    }
+
+                }
+            });
+            Preferences.setSortOrder(getContext(), SORT_BY_ARTIST);
+        }
+
+        public void sortByType() {
+            Collections.sort(mITEMs, new Comparator<TrackItem>() {
+                @Override
+                public int compare(TrackItem track, TrackItem t1) {
+                    if (!track.isTrack() && t1.isTrack()) {
+                        return -1;
+                    } else if (track.isTrack() && !t1.isTrack()) {
+                        return 1;
+                    } else if (!track.isTrack() && !t1.isTrack()) {
+                        return track.getName().compareToIgnoreCase(t1.getName());
+                    } else if (!track.getExtension().equals(t1.getExtension())) {
+                        return track.getExtension().compareToIgnoreCase(t1.getExtension());
+                    } else if (track.getExtension().equals(t1.getExtension())) {
+                        return track.getName().compareToIgnoreCase(t1.getName());
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            Preferences.setSortOrder(getContext(), SORT_BY_TYPE);
+        }
+
+        public void sortByDate() {
+            Collections.sort(mITEMs, new Comparator<TrackItem>() {
+                @Override
+                public int compare(TrackItem track, TrackItem t1) {
+                    if (!track.isTrack() && t1.isTrack()) {
+                        return -1;
+                    } else if (track.isTrack() && !t1.isTrack()) {
+                        return 1;
+                    } else if (!track.isTrack() && !t1.isTrack()) {
+                        return track.getName().compareToIgnoreCase(t1.getName());
+                    } else if (track.getDate() > t1.getDate()) {
+                        return -1;
+                    } else if (track.getDate() < t1.getDate()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            Preferences.setSortOrder(getContext(), SORT_BY_DATE);
+        }
+
+    }
+
+
+    class TrackHolder extends SelectableHolder<TrackItem> {
+
+        private TrackItem mTrackItem;
+        private TextView mNameTextView;
+        private TextView mArtistTextView;
+        private TextView mDurationTextView;
+        private TextView mExtensionTextView;
+        private ImageView mFolderIconImageView;
+
+        @Override
+        ActionMode getActionMode() {
+            return mActionMode;
+        }
+
+        @Override
+        void onClick() {
+            onTrackHolderClick(mTrackItem, getAdapterPosition());
+//            if (!mTrackItem.isTrack()) {
+//                onBackPressed(mTrackItem.getFile());
+//            } else {
+//                playTrack(mTrackItem, getAdapterPosition());
+//            }
+        }
+
+        @Override
+        void onLongClick() {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            mActionMode = activity.startSupportActionMode(mModeCallback);
+
+        }
+
+        @Override
+        boolean isSwapMode() {
+            return mIsSwapMode;
+        }
+
+        public TrackHolder(View itemView) {
+            super(itemView);
+            mNameTextView = (TextView) itemView.findViewById(R.id.track_name_text_view);
+            mArtistTextView = (TextView) itemView.findViewById(R.id.artist_text_view);
+            mDurationTextView = (TextView) itemView.findViewById(R.id.duration_text_view);
+            mExtensionTextView = (TextView) itemView.findViewById(R.id.extension_text_view);
+            mFolderIconImageView = (ImageView) itemView.findViewById(R.id.folder_image_view);
+            itemView.setOnClickListener(this);
+        }
+
+        public void bindItem(TrackItem trackItem) {
+            setITEM(trackItem);
+            mTrackItem = trackItem;
+            File file = trackItem.getFile();
+
+            setViewsVisibility(trackItem, file);
+
+            if (trackItem.isTrack()) {
+                if (trackItem.isHasInfo()) {
+                    setTrackName(trackItem);
+                    setTrackDuration(trackItem);
+                    mExtensionTextView.setText(trackItem.getExtension());
+                }
+            } else {
+                mNameTextView.setText(file.getName());
+                mNameTextView.setLines(1);
+            }
+
+
+        }
+
+
+        private void setTrackDuration(TrackItem trackItem) {
+            mDurationTextView.setText(trackItem.getDuration());
+            if (trackItem.getDuration().equals(TrackInfoParser.FILE_CORRUPTED)) {
+                mDurationTextView.setTextColor(Color.RED);
+            } else {
+                mDurationTextView.setTextColor(Color.WHITE);
+            }
+        }
+
+        private void setTrackName(TrackItem trackItem) {
+            if (trackItem.getTrackName() == null) {
+                mNameTextView.setLines(2);
+                mNameTextView.setText(trackItem.getName());
+                mArtistTextView.setVisibility(View.GONE);
+            } else {
+                mNameTextView.setLines(1);
+                mNameTextView.setText(trackItem.getTrackName());
+                mArtistTextView.setText(trackItem.getTrackArtist());
+                mArtistTextView.setVisibility(View.VISIBLE);
+            }
+        }
+
+        private void setViewsVisibility(TrackItem trackItem, File file) {
+            if (file.isDirectory()) {
+                mNameTextView.setText(trackItem.getName());
+                mArtistTextView.setVisibility(View.GONE);
+                mDurationTextView.setVisibility(View.GONE);
+                mExtensionTextView.setVisibility(View.GONE);
+                mFolderIconImageView.setVisibility(View.VISIBLE);
+            } else {
+                mArtistTextView.setVisibility(View.VISIBLE);
+                mDurationTextView.setVisibility(View.VISIBLE);
+                mExtensionTextView.setVisibility(View.VISIBLE);
+                mFolderIconImageView.setVisibility(View.GONE);
+            }
+        }
+
+
     }
 
 

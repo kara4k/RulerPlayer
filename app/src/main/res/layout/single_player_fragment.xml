@@ -67,7 +67,7 @@
         android:gravity="center"
         android:textSize="18sp"
         android:lines="3"
-        android:text="Never wish you dieNever wish you die"
+        android:text="Never wish you die"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         />

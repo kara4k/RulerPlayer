@@ -6,7 +6,7 @@
 
         <item
             android:id="@+id/navigation_item_card_fragment"
-            android:icon="@android:drawable/ic_media_play"
+            android:icon="@drawable/ic_sd_card_white_24dp"
             android:title="Player"
             />
         <item

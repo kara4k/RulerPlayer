@@ -31,6 +31,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
     private TextView mTrackArtistTextView;
     private RulerCycleView mRulerCycleView;
     private LinearLayout mCycleLayout;
+    // TODO: 24.06.2017 xml layout defaults (name, duration)
 
 
     public static SinglePlayerFragment newInstance() {
