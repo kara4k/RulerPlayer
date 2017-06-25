@@ -31,7 +31,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
     private TextView mTrackArtistTextView;
     private RulerCycleView mRulerCycleView;
     private LinearLayout mCycleLayout;
-    // TODO: 24.06.2017 xml layout defaults (name, duration)
+    // TODO: 24.06.2017 xml layout defaults ()
 
 
     public static SinglePlayerFragment newInstance() {
@@ -164,17 +164,32 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
             mSeekBar.setProgress(progress);
             mProgressTextView.setText(progressString);
         }
+        if (message.what == Player.BUFFERING) {
+            int percentBuffered = message.arg1;
+            mRulerView.setBuffering(percentBuffered);
+            if (percentBuffered == 100) {
+                mRulerView.stopBuffering();
+            }
+
+        }
         return true;
     }
 
     @Override
-    public void onPlayTrack(TrackItem trackItem) {
-        mRulerCycleView.stopCycle();
-        setTrackName(trackItem);
-        setTrackDuration(trackItem);
-        mSeekBar.setMax(mPlayer.getDuration());
-        mDurationTextView.setText(trackItem.getDuration());
-        mRulerView.invalidate();
+    public void onPlayTrack(final TrackItem trackItem) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                mRulerCycleView.stopCycle();
+                mRulerView.stopBuffering();
+                setTrackName(trackItem);
+                setTrackDuration(trackItem);
+                mSeekBar.setMax(mPlayer.getDuration());
+                mDurationTextView.setText(trackItem.getDuration());
+                mRulerView.invalidate();
+            }
+        });
+
 
     }
 
@@ -200,7 +215,13 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
 
     @Override
     public void onPlay() {
-        mPlayImgBtn.setImageResource(R.drawable.ic_pause_white_48dp);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mPlayImgBtn.setImageResource(R.drawable.ic_pause_white_48dp);
+            }
+        });
+
     }
 
     @Override
@@ -210,10 +231,18 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
 
     @Override
     public void onStopTrack() {
-        mPlayImgBtn.setImageResource(R.drawable.ic_play_arrow_white_48dp);
-        mSeekBar.setProgress(0);
-        mProgressTextView.setText("0:00");
-        mRulerCycleView.stopCycle();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRulerCycleView.stopCycle();
+                mPlayImgBtn.setImageResource(R.drawable.ic_play_arrow_white_48dp);
+                mSeekBar.setProgress(0);
+                mProgressTextView.setText("0:00");
+                mRulerCycleView.setVisibility(View.GONE);
+                mCycleLayout.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override
@@ -226,12 +255,14 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
             case R.id.next_image_button:
                 if (mPlayer == null) return;
                 mPlayer.stopTracking();
+                mRulerView.stopBuffering();
                 mRulerCycleView.stopCycle();
                 mPlayer.playNext();
                 break;
             case R.id.prev_image_button:
                 if (mPlayer == null) return;
                 mPlayer.stopTracking();
+                mRulerView.stopBuffering();
                 mRulerCycleView.stopCycle();
                 mPlayer.playPrev();
                 break;
@@ -243,6 +274,12 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
                 checkPositionInNewThread();
                 break;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRulerCycleView.stopCycle();
     }
 
     private void checkPositionInNewThread() {
@@ -271,6 +308,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
             mPlayer.seekTo(position);
             String positionString = TrackInfoParser.getDuration(String.valueOf(position));
             mProgressTextView.setText(positionString);
+            mRulerView.setBufferingStart();
         }
 
     }

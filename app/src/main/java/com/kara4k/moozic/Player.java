@@ -6,8 +6,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import static android.content.Context.AUDIO_SERVICE;
 
@@ -15,6 +13,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
 
 
     public static final int PROGRESS = 1;
+    public static final int BUFFERING = 2;
 
 
     private Context mContext;
@@ -25,6 +24,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     private PlayerSingleCallback mPlayerSingleCallback;
     private PlayerListCallback mPlayerListCallback;
     private boolean shouldStop = false;
+    private Player mPlayer;
 
     interface PlayerSingleCallback {
         void onPlayTrack(TrackItem trackItem);
@@ -41,10 +41,13 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         void playNext();
 
         void playPrev();
+
+        void repeatCurrent();
     }
 
 
     public Player(Context context) {
+        mPlayer = this;
         mContext = context;
         playOnInterrupt = false;
         mAudioManager = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
@@ -60,32 +63,43 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         }
     }
 
-    public void playTrack(TrackItem trackItem) {
-//        playOnInterrupt = true;
-        stop();
-        try {
-            if (trackItem == null) return;
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setOnCompletionListener(this);
-            mMediaPlayer.setDataSource(trackItem.getFile().toString());
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-            mMediaPlayer.prepare();
-            mMediaPlayer.start();
+    public void playTrack(final TrackItem trackItem) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                stop();
+                try {
+                    if (trackItem == null) return;
+                    mMediaPlayer = new MediaPlayer();
+                    mMediaPlayer.setOnCompletionListener(mPlayer);
+                    mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
+                        @Override
+                        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+                            if (mSingleFragHandler != null) {
+                                mSingleFragHandler.obtainMessage(BUFFERING, percent, 0).sendToTarget();
+                                Log.e("Player", "onBufferingUpdate: " + percent);
+                            }
+                        }
+                    });
+                    mMediaPlayer.setDataSource(trackItem.getFilePath());
+                    mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    mMediaPlayer.prepare();
+                    mMediaPlayer.start();
 
-            if (mPlayerSingleCallback != null) {
-                mPlayerSingleCallback.onPlayTrack(trackItem);
-                mPlayerSingleCallback.onPlay();
+                    if (mPlayerSingleCallback != null) {
+                        mPlayerSingleCallback.onPlayTrack(trackItem);
+                        mPlayerSingleCallback.onPlay();
+                    }
+
+                    startTracking();
+
+                } catch (Exception e) {
+                    stopTracking();
+                    e.printStackTrace();
+                }
             }
-            startTracking();
+        }).start();
 
-        } catch (Exception e) {
-            stopTracking();
-            e.printStackTrace();
-            Toast toast = Toast.makeText(mContext, R.string.source_file_corrupted, Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
-        }
     }
 
     private void play() {
@@ -94,7 +108,6 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         if (mPlayerSingleCallback != null) {
             mPlayerSingleCallback.onPlay();
         }
-//        playOnInterrupt = true;
         startTracking();
     }
 
@@ -102,14 +115,18 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         if (mPlayerListCallback != null) {
             mPlayerListCallback.playNext();
         }
-//        playOnInterrupt = true;
+    }
+
+    public void repeatCurrent() {
+        if (mPlayerListCallback != null) {
+            mPlayerListCallback.repeatCurrent();
+        }
     }
 
     public void playPrev() {
         if (mPlayerListCallback != null) {
             mPlayerListCallback.playPrev();
         }
-//        playOnInterrupt = true;
     }
 
     public void play(TrackItem trackItem) {
@@ -151,10 +168,8 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         }
         if (mMediaPlayer.isPlaying()) {
             pause();
-//            playOnInterrupt = false;
         } else {
             play();
-//            playOnInterrupt = true;
         }
     }
 
@@ -168,7 +183,6 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         if (mPlayerSingleCallback != null) {
             mPlayerSingleCallback.onStopTrack();
         }
-//        playOnInterrupt = false;
     }
 
     @Override
@@ -220,16 +234,16 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
             public void run() {
                 while (!shouldStop) {
                     try {
-                    if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-                        if (mSingleFragHandler == null) {
-                            shouldStop = true;
-                            continue;
-                        }
-                        mSingleFragHandler.obtainMessage(PROGRESS,
-                                mMediaPlayer.getCurrentPosition(), 0).sendToTarget();
+                        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                            if (mSingleFragHandler == null) {
+                                shouldStop = true;
+                                continue;
+                            }
+                            mSingleFragHandler.obtainMessage(PROGRESS,
+                                    mMediaPlayer.getCurrentPosition(), 0).sendToTarget();
 
                             Thread.sleep(500);
-                    }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -239,12 +253,12 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void seekTo(int position) {
-        if (mMediaPlayer!=null) {
+        if (mMediaPlayer != null) {
             mMediaPlayer.seekTo(position);
         }
     }
 
-    public void stopTracking(){
+    public void stopTracking() {
         shouldStop = true;
     }
 
@@ -255,14 +269,9 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-        TrackItem currentTrack = Preferences.getCurrentTrack(mContext);
-        if (currentTrack == null) {
-            return;
-        }
-
         boolean repeatOne = Preferences.isRepeatOne(mContext);
         if (repeatOne) {
-            playTrack(currentTrack);
+            repeatCurrent();
         } else {
             playNext();
         }

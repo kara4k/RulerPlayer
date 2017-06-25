@@ -105,6 +105,8 @@ public class RulerCycleView extends RulerView {
         invalidate();
     }
 
+
+
     private void setupLines() {
         int cycleSec = (mEndValue - mStartValue) / 1000;
         float rulerWidth = mEndX - mStartX;
@@ -131,7 +133,7 @@ public class RulerCycleView extends RulerView {
         mText = String.format("%ds", secPerLine);
         float firstPoint = mStartX + step;
         float textWidth = mTextPaint.measureText(mText);
-        mTextX = firstPoint - textWidth /2;
+        mTextX = firstPoint - textWidth / 2;
         mTextY = mStartY;
 
         ArrayList<Float> linesPoints = new ArrayList<>();
@@ -151,12 +153,16 @@ public class RulerCycleView extends RulerView {
 
     public void stopCycle() {
         mIsCycleMode = false;
+        resetPointValues();
+        invalidate();
+    }
+
+    private void resetPointValues() {
         mStartValue = -1;
         mEndValue = -1;
         mStartX = -1f;
         mEndX = -1f;
         mLinesPoints = new float[0];
-        invalidate();
     }
 
     public boolean isCycleMode() {

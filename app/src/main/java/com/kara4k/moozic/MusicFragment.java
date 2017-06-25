@@ -79,7 +79,6 @@ public abstract class MusicFragment extends Fragment implements
 
     }
 
-    //    abstract ADAPTER getADAPTER();
     abstract void onCreateView();
 
     abstract void onTrackHolderClick(TrackItem trackItem, int newPosition);
@@ -92,6 +91,7 @@ public abstract class MusicFragment extends Fragment implements
 
     abstract void onBackPressed();
 
+    abstract boolean onQuerySearchSubmit(String text);
 
 
     @Override
@@ -214,7 +214,7 @@ public abstract class MusicFragment extends Fragment implements
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return false;
+        return onQuerySearchSubmit(query);
     }
 
     @Override
@@ -316,6 +316,13 @@ public abstract class MusicFragment extends Fragment implements
 
             mCardCallbacks.onPlay(trackItem);
         }
+    }
+
+
+    @Override
+    public void repeatCurrent() {
+        if (mCurrentTrack == null) return;
+        mCardCallbacks.onPlayPressed(mCurrentTrack);
     }
 
     @Override
@@ -440,7 +447,7 @@ public abstract class MusicFragment extends Fragment implements
             holder.bindItem(mITEMs.get(position));
 
             if (mCurrentTrack != null) {
-                if (mCurrentTrack.getFile().getPath().equals(mITEMs.get(position).getFile().getPath())) {
+                if (mCurrentTrack.getFilePath().equals(mITEMs.get(position).getFilePath())) {
                     holder.itemView.setBackgroundResource(R.drawable.selectable_current_background);
                 } else {
                     holder.itemView.setBackgroundResource(R.drawable.selectable_item_background);
@@ -461,8 +468,8 @@ public abstract class MusicFragment extends Fragment implements
 
             int index = -1;
             for (int i = 0; i < mITEMs.size(); i++) {
-                File file = mITEMs.get(i).getFile();
-                if (file.getPath().equals(mCurrentTrack.getFile().getPath())) {
+                String filePath = mITEMs.get(i).getFilePath();
+                if (filePath.equals(mCurrentTrack.getFilePath())) {
                     index = i;
                     break;
                 }
@@ -470,11 +477,11 @@ public abstract class MusicFragment extends Fragment implements
             return index;
         }
 
-        private TrackItem getCurrentTrack() {
-            int currentIndex = getCurrentIndex();
-            if (currentIndex == -1) return null;
-            return mITEMs.get(currentIndex);
-        }
+//        private TrackItem getCurrentTrack() {
+//            int currentIndex = getCurrentIndex();
+//            if (currentIndex == -1) return null;
+//            return mITEMs.get(currentIndex);
+//        }
 
         public void sortByName() {
             Collections.sort(mITEMs, new Comparator<TrackItem>() {
@@ -539,8 +546,6 @@ public abstract class MusicFragment extends Fragment implements
                         return track.getName().compareToIgnoreCase(t1.getName());
                     } else if (!track.getExtension().equals(t1.getExtension())) {
                         return track.getExtension().compareToIgnoreCase(t1.getExtension());
-                    } else if (track.getExtension().equals(t1.getExtension())) {
-                        return track.getName().compareToIgnoreCase(t1.getName());
                     } else {
                         return 0;
                     }
@@ -591,11 +596,6 @@ public abstract class MusicFragment extends Fragment implements
         @Override
         void onClick() {
             onTrackHolderClick(mTrackItem, getAdapterPosition());
-//            if (!mTrackItem.isTrack()) {
-//                onBackPressed(mTrackItem.getFile());
-//            } else {
-//                playTrack(mTrackItem, getAdapterPosition());
-//            }
         }
 
         @Override
@@ -625,7 +625,7 @@ public abstract class MusicFragment extends Fragment implements
             mTrackItem = trackItem;
             File file = trackItem.getFile();
 
-            setViewsVisibility(trackItem, file);
+            setViewsVisibility(trackItem);
 
             if (trackItem.isTrack()) {
                 if (trackItem.isHasInfo()) {
@@ -664,8 +664,8 @@ public abstract class MusicFragment extends Fragment implements
             }
         }
 
-        private void setViewsVisibility(TrackItem trackItem, File file) {
-            if (file.isDirectory()) {
+        private void setViewsVisibility(TrackItem trackItem) {
+            if (!trackItem.isTrack()) {
                 mNameTextView.setText(trackItem.getName());
                 mArtistTextView.setVisibility(View.GONE);
                 mDurationTextView.setVisibility(View.GONE);

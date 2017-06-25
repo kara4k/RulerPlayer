@@ -9,6 +9,7 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
 
     String mName;
     File mFile;
+    String mFilePath;
     boolean mIsTrack;
     String mTrackName;
     String mTrackArtist;
@@ -18,6 +19,7 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
     long mDate;
     String mBitrate;
     boolean mHasInfo;
+    boolean isOnline;
 
     public String getName() {
         return mName;
@@ -38,6 +40,7 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
     public boolean isTrack() {
         return mIsTrack;
     }
+
 
     public void setTrack(boolean track) {
         mIsTrack = track;
@@ -79,6 +82,14 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
         return mDate;
     }
 
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
     public void setDate(long date) {
         this.mDate = date;
     }
@@ -89,6 +100,14 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
 
     public int getDurationMs() {
         return mDurationMs;
+    }
+
+    public String getFilePath() {
+        return mFilePath;
+    }
+
+    public void setFilePath(String filePath) {
+        mFilePath = filePath;
     }
 
     public void setDurationMs(int durationMs) {

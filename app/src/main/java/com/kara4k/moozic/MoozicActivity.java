@@ -25,7 +25,7 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
 
     @Override
     protected Fragment getFirstFragment() {
-        return CardViewPagerFragment.newInstance();
+        return ZaycevViewPagerFragment.newInstance();
     }
 
     @Override
@@ -34,8 +34,8 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
             case R.id.navigation_item_card_fragment:
                 replaceFragment(CardViewPagerFragment.newInstance());
                 break;
-            case R.id.test2:
-                replaceFragment(CardFragment.newInstance());
+            case R.id.navigation_item_search_fragment:
+                replaceFragment(ZaycevViewPagerFragment.newInstance());
                 break;
         }
     }

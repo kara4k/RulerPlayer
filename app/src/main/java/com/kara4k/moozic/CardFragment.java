@@ -91,6 +91,11 @@ public class CardFragment extends MusicFragment
         mTracksAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public boolean onQuerySearchSubmit(String query) {
+        return false;
+    }
+
     private void updateUI(File dir) {
         mTrackInfoParser.clearQueue();
         if (dir == null) {

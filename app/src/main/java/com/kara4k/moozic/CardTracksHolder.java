@@ -43,6 +43,7 @@ public class CardTracksHolder {
 
     public static void fillTrackData(TrackItem trackItem, File file) {
         trackItem.setFile(file);
+        trackItem.setFilePath(file.getPath());
         trackItem.setName(file.getName());
         trackItem.setTrack(file.isFile());
         trackItem.setDate(file.lastModified());

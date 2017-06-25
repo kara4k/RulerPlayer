@@ -132,11 +132,15 @@ public class TrackInfoParser extends HandlerThread {
                 if (s < 10) {
                     sec = "0" + sec;
                 }
+                String min = String.valueOf(m);
+                if (h > 0 && m < 10) {
+                    min = "0" + m;
+                }
                 String dur;
                 if (h == 0) {
                     dur = m + ":" + sec;
                 } else {
-                    dur = h + ":" + m + ":" + sec;
+                    dur = h + ":" + min + ":" + sec;
                 }
                 return dur;
             } catch (NumberFormatException e) {

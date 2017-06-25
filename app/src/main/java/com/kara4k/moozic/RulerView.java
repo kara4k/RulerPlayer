@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.SeekBar;
@@ -69,6 +70,10 @@ public class RulerView extends View {
     private float mTextX = -1f;
     private float mTextY = -1f;
     private boolean mIsDrawText;
+
+    private boolean mIsBuffering;
+    private float mBufStartX = -1;
+    private float mBufEndX = -1;
 
     public RulerView(Context context, SeekBar seekBar) {
         super(context);
@@ -298,8 +303,38 @@ public class RulerView extends View {
         if (mIsDrawText) {
             canvas.drawText(mText, mTextX, mTextY, mTextPaint);
         }
+        if (mIsBuffering) {
+            canvas.drawRect(mBufStartX, mRulerStartY, mBufEndX, (mRulerStartY + mRulerSmallLineEndY) / 2, mPaint);
+        }
     }
 
+    public void setBuffering(int percent) {
+        mIsBuffering = true;
+        if(mBufStartX == -1) {
+            mBufStartX = mRulerStartX;
+        }
+        float bufEndX = mBufStartX + mRulerWidth / 100 * percent;
+        if (bufEndX > mRulerEndX) {
+            mBufEndX = mRulerEndX;
+        } else {
+            mBufEndX = bufEndX;
+        }
+        Log.e("RulerView", "setBuffering: " + mBufStartX);
+        Log.e("RulerView", "setBuffering: " + mBufEndX);
+        Log.e("RulerView", "setBuffering: " + mIsBuffering);
+        invalidate();
+    }
+
+    public void setBufferingStart(){
+        mBufStartX = getProgressPosition();
+    }
+
+    public void stopBuffering() {
+        mIsBuffering = false;
+        mBufStartX = -1;
+        mBufEndX = -1;
+        invalidate();
+    }
 
     protected float getProgressPosition() {
         return mRulerStartX + mRulerWidth / mSeekBar.getMax() * mSeekBar.getProgress();

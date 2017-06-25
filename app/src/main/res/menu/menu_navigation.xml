@@ -10,8 +10,8 @@
             android:title="Player"
             />
         <item
-            android:id="@+id/test2"
-            android:icon="@android:drawable/ic_media_play"
+            android:id="@+id/navigation_item_search_fragment"
+            android:icon="@drawable/ic_search_white_24dp"
             android:title="Player"
             />
 
