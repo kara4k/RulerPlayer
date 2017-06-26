@@ -38,6 +38,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     interface PlayerListCallback {
+
         void playNext();
 
         void playPrev();
@@ -55,9 +56,10 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void playToggle() {
-        if (mMediaPlayer == null) {
-            TrackItem currentTrack = Preferences.getCurrentTrack(mContext);
-            playTrack(currentTrack);
+        if (mMediaPlayer == null) { // TODO: 25.06.2017 db current track
+//            TrackItem currentTrack = Preferences.getCurrentTrack(mContext);
+//            playTrack(currentTrack);
+            repeatCurrent();
         } else {
             togglePlayPause();
         }
@@ -183,6 +185,13 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         if (mPlayerSingleCallback != null) {
             mPlayerSingleCallback.onStopTrack();
         }
+    }
+
+    public boolean isPlaying(){
+        if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+            return false;
+        }
+        return true;
     }
 
     @Override

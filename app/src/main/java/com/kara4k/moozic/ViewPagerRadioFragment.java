@@ -10,16 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ZaycevViewPagerFragment extends Fragment {
+public class ViewPagerRadioFragment extends Fragment {
 
-    private LockableViewPager mLockableViewPager;
+    public static ViewPagerRadioFragment newInstance() {
 
-    public static ZaycevViewPagerFragment newInstance() {
         Bundle args = new Bundle();
-        ZaycevViewPagerFragment fragment = new ZaycevViewPagerFragment();
+
+        ViewPagerRadioFragment fragment = new ViewPagerRadioFragment();
         fragment.setArguments(args);
         return fragment;
     }
+
+
+    private LockableViewPager mLockableViewPager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,10 +47,10 @@ public class ZaycevViewPagerFragment extends Fragment {
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public android.support.v4.app.Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return ZaycevSearchFragment.newInstance();
+                    return RadioFragment.newInstance();
                 case 1:
                     return SinglePlayerFragment.newInstance();
             }

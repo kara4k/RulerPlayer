@@ -14,6 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.ActionBarOverlay"
             android:name=".MoozicActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">

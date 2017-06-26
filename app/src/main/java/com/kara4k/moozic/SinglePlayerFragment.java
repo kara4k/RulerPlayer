@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class SinglePlayerFragment extends Fragment implements Handler.Callback, Player.PlayerSingleCallback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class SinglePlayerFragment extends Fragment implements Handler.Callback,
+        Player.PlayerSingleCallback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private Handler mHandler;
     private SeekBar mSeekBar;
@@ -31,7 +33,6 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
     private TextView mTrackArtistTextView;
     private RulerCycleView mRulerCycleView;
     private LinearLayout mCycleLayout;
-    // TODO: 24.06.2017 xml layout defaults ()
 
 
     public static SinglePlayerFragment newInstance() {
@@ -88,7 +89,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
         Button finishCycleBtn = (Button) view.findViewById(R.id.finish_cycle_button);
         finishCycleBtn.setOnClickListener(this);
         mCycleLayout = (LinearLayout) view.findViewById(R.id.cycle_layout);
-        initLastTrack();
+//        initLastTrack();
         return view;
     }
 
@@ -104,6 +105,9 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
             return;
         }
         mSeekBar.setMax(lastTrack.getDurationMs());
+        if (mPlayer != null && mPlayer.isPlaying()) {
+            mPlayImgBtn.setImageResource(R.drawable.ic_pause_white_48dp);
+        }
     }
 
     @Override
@@ -180,7 +184,6 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                mRulerCycleView.stopCycle();
                 mRulerView.stopBuffering();
                 setTrackName(trackItem);
                 setTrackDuration(trackItem);
@@ -215,6 +218,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
 
     @Override
     public void onPlay() {
+        Log.e("SinglePlayerFragment", "onPlay: " + mPlayer.getDuration());
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -235,6 +239,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
             @Override
             public void run() {
                 mRulerCycleView.stopCycle();
+                mRulerView.stopBuffering();
                 mPlayImgBtn.setImageResource(R.drawable.ic_play_arrow_white_48dp);
                 mSeekBar.setProgress(0);
                 mProgressTextView.setText("0:00");
@@ -255,14 +260,12 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback, 
             case R.id.next_image_button:
                 if (mPlayer == null) return;
                 mPlayer.stopTracking();
-                mRulerView.stopBuffering();
                 mRulerCycleView.stopCycle();
                 mPlayer.playNext();
                 break;
             case R.id.prev_image_button:
                 if (mPlayer == null) return;
                 mPlayer.stopTracking();
-                mRulerView.stopBuffering();
                 mRulerCycleView.stopCycle();
                 mPlayer.playPrev();
                 break;

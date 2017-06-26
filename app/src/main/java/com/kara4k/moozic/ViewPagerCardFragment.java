@@ -10,14 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CardViewPagerFragment extends Fragment {
+public class ViewPagerCardFragment extends Fragment {
 
 
     private LockableViewPager mLockableViewPager;
 
-    public static CardViewPagerFragment newInstance() {
+    public static ViewPagerCardFragment newInstance() {
         Bundle args = new Bundle();
-        CardViewPagerFragment fragment = new CardViewPagerFragment();
+        ViewPagerCardFragment fragment = new ViewPagerCardFragment();
         fragment.setArguments(args);
         return fragment;
     }

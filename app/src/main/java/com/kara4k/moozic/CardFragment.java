@@ -1,17 +1,11 @@
 package com.kara4k.moozic;
 
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
-import android.view.Gravity;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,8 +14,6 @@ import java.util.List;
 
 public class CardFragment extends MusicFragment
         implements SearchView.OnQueryTextListener, Player.PlayerListCallback {
-
-    public static final int PERMISSION_STORAGE = 1;
 
 
     private File mCurrentDir;
@@ -40,7 +32,7 @@ public class CardFragment extends MusicFragment
         mSearchableItems = new ArrayList<>();
         mCardTracksHolder = new CardTracksHolder(getContext());
         setupTrackInfoReceiver();
-        checkPermissionsAndSetupCurrentFolder();
+        checkSdPermission();
     }
 
     @Override
@@ -55,9 +47,9 @@ public class CardFragment extends MusicFragment
 
     @Override
     void onPlayBtnPressed() {
-        if (mCurrentTrack == null) return;
+        if (mCurrentTrack == null ) return;
         mCardCallbacks.onPlayPressed(mCurrentTrack);
-        if (mCurrentDir == null) return;
+        if (mCurrentDir == null || mCurrentTrack.isOnline()) return;
         File parentFile = mCurrentTrack.getFile().getParentFile();
         if (!mCurrentDir.getPath().equals(parentFile.getPath())) {
             updateUI(parentFile);
@@ -96,6 +88,11 @@ public class CardFragment extends MusicFragment
         return false;
     }
 
+    @Override
+    void onSdCardPermissionGranted() {
+        setCurrentDir();
+    }
+
     private void updateUI(File dir) {
         mTrackInfoParser.clearQueue();
         if (dir == null) {
@@ -108,47 +105,6 @@ public class CardFragment extends MusicFragment
         mRecyclerView.setAdapter(mTracksAdapter);
 
         mTrackInfoParser.queueTrackInfo(tracksInDir);
-    }
-
-    private void checkPermissionsAndSetupCurrentFolder() {
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return;
-        }
-
-        boolean hasSDPermissions = isHasSDPermissions();
-        if (hasSDPermissions) {
-            setCurrentDir();
-        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_STORAGE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_STORAGE:
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast toast = Toast.makeText(getContext(),
-                            R.string.snackbar_sd_card_access, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                } else {
-                    setCurrentDir();
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private boolean isHasSDPermissions() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            int hasReadSDPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            if (hasReadSDPermission == PackageManager.PERMISSION_DENIED) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private void setupTrackInfoReceiver() {
@@ -179,22 +135,17 @@ public class CardFragment extends MusicFragment
 
     private void setCurrentDir() {
         mCurrentTrack = Preferences.getCurrentTrack(getContext());
-        if (mCurrentTrack != null) {
+        if (mCurrentTrack != null && !mCurrentTrack.isOnline()) {
             mCurrentDir = mCurrentTrack.getFile().getParentFile();
         } else {
             mCurrentDir = Environment.getExternalStorageDirectory();
         }
     }
 
-    @Override
-    protected void setCurrentTrack(TrackItem trackItem) {
-        super.setCurrentTrack(trackItem);
-        Preferences.setCurrentTrack(getContext(), trackItem);
-    }
 
     @Override
     int getCurrentTrackIndex() {
-        if (mCurrentTrack == null || mCurrentDir == null) return -1;
+        if (mCurrentTrack == null || mCurrentTrack.isOnline() || mCurrentDir == null) return -1;
         File parentFile = mCurrentTrack.getFile().getParentFile();
         if (!mCurrentDir.getPath().equals(parentFile.getPath())) {
             updateUI(parentFile);

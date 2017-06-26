@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ZaycevSearchFragment extends MusicFragment {
+public class SearchFragment extends MusicFragment {
 
 
     private String mQuery;
@@ -21,9 +21,9 @@ public class ZaycevSearchFragment extends MusicFragment {
     private boolean mHasMore = true;
 
 
-    public static ZaycevSearchFragment newInstance() {
+    public static SearchFragment newInstance() {
         Bundle args = new Bundle();
-        ZaycevSearchFragment fragment = new ZaycevSearchFragment();
+        SearchFragment fragment = new SearchFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,7 +37,7 @@ public class ZaycevSearchFragment extends MusicFragment {
                     int itemCount = mLayoutManager.getItemCount();
                     int lastCompletelyVisible = mLayoutManager.findLastCompletelyVisibleItemPosition();
                     if (lastCompletelyVisible == itemCount - 1) {
-                        Log.e("ZaycevSearchFragment", "onScrolled: " + mHasMore);
+                        Log.e("SearchFragment", "onScrolled: " + mHasMore);
                         mPage++;
                         if (mHasMore) {
                             new TracksFetchr().execute(mQuery);
@@ -66,7 +66,11 @@ public class ZaycevSearchFragment extends MusicFragment {
 
     @Override
     void onPlayBtnPressed() {
-
+        if (mCurrentTrack == null) return;
+        mCardCallbacks.onPlayPressed(mCurrentTrack);
+        int currentIndex = mTracksAdapter.getCurrentIndex();
+        if (currentIndex == -1) return;
+        mLayoutManager.scrollToPosition(currentIndex);
     }
 
     @Override
@@ -84,6 +88,13 @@ public class ZaycevSearchFragment extends MusicFragment {
         return true;
     }
 
+
+    @Override
+    void onSdCardPermissionGranted() {
+
+    }
+
+
     class TracksFetchr extends AsyncTask<String, Void, List<TrackItem>> {
 
         ProgressDialog mProgressDialog;
@@ -97,7 +108,6 @@ public class ZaycevSearchFragment extends MusicFragment {
                    mProgressDialog = new ProgressDialog(getContext());
                    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                    mProgressDialog.setMessage("Loading");
-                   mProgressDialog.setCancelable(false);
                    mProgressDialog.show();
                }
            });
@@ -117,22 +127,26 @@ public class ZaycevSearchFragment extends MusicFragment {
         @Override
         protected void onPostExecute(List<TrackItem> trackItems) {
 
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.hide();
-                mProgressDialog = null;
-            }
+            try {
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                    mProgressDialog.hide();
+                    mProgressDialog = null;
+                }
 
-            if (trackItems == null) {
-                trackItems = new ArrayList<>();
-            }
-            if (trackItems.size() < 20) mHasMore = false;
+                if (trackItems == null) {
+                    trackItems = new ArrayList<>();
+                }
+                if (trackItems.size() < 20) mHasMore = false;
 
-            if (mPage == 1) {
-                mTracksAdapter.setITEMs(trackItems);
-            } else {
-                mTracksAdapter.appendItems(trackItems);
+                if (mPage == 1) {
+                    mTracksAdapter.setITEMs(trackItems);
+                } else {
+                    mTracksAdapter.appendItems(trackItems);
+                }
+                mTracksAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            mTracksAdapter.notifyDataSetChanged();
         }
     }
 }

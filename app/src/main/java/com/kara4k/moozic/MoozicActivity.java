@@ -25,17 +25,20 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
 
     @Override
     protected Fragment getFirstFragment() {
-        return ZaycevViewPagerFragment.newInstance();
+        return ViewPagerSearchFragment.newInstance();
     }
 
     @Override
     void onNavigationItemPressed(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.navigation_item_card_fragment:
-                replaceFragment(CardViewPagerFragment.newInstance());
+                replaceFragment(ViewPagerCardFragment.newInstance());
                 break;
             case R.id.navigation_item_search_fragment:
-                replaceFragment(ZaycevViewPagerFragment.newInstance());
+                replaceFragment(ViewPagerSearchFragment.newInstance());
+                break;
+            case R.id.navigation_item_radio:
+                replaceFragment(ViewPagerRadioFragment.newInstance());
                 break;
         }
     }

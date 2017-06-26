@@ -43,7 +43,12 @@ public class ZaycevFetchr {
 
             String dataUrl = String.format("http://zaycev.net%s", element.attr("data-url"));
 
-            setTrackUrl(trackItem, dataUrl);
+            try {
+                setTrackUrl(trackItem, dataUrl);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+                continue;
+            }
 
             trackItem.setTrackName(trackName);
             trackItem.setTrackArtist(trackArtist);

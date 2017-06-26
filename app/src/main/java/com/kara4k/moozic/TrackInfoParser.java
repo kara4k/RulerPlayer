@@ -152,8 +152,13 @@ public class TrackInfoParser extends HandlerThread {
     }
 
     public void clearQueue() {
-        mHandler.removeMessages(GET_TRACK_INFO);
-        mFragmentHandler.removeMessages(GET_TRACK_INFO);
+        if (mHandler != null) {
+            mHandler.removeMessages(GET_TRACK_INFO);
+
+        }
+        if (mFragmentHandler!=null){
+            mFragmentHandler.removeMessages(GET_TRACK_INFO);
+        }
     }
 
     public void setInfoParserCallback(InfoParserCallback infoParserCallback) {

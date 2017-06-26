@@ -1,12 +1,19 @@
 package com.kara4k.moozic;
 
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,9 +41,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 public abstract class MusicFragment extends Fragment implements
         Player.PlayerListCallback, SearchView.OnQueryTextListener {
 
+
+    public static final int PERMISSION_SDCARD = 1;
 
     public static final int SORT_BY_NAME = 1;
     public static final int SORT_BY_ARTIST = 2;
@@ -93,6 +104,8 @@ public abstract class MusicFragment extends Fragment implements
 
     abstract boolean onQuerySearchSubmit(String text);
 
+    abstract void onSdCardPermissionGranted();
+
 
     @Override
     public void onAttach(Context context) {
@@ -101,6 +114,19 @@ public abstract class MusicFragment extends Fragment implements
         mModeListener = (ActionModeListener) getActivity();
         mCardCallbacks = (CardFragment.CardCallbacks) getActivity();
         setActivityCallback();
+        showActionBar();
+    }
+
+    private void showActionBar() {
+        try {
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            ActionBar supportActionBar = activity.getSupportActionBar();
+             if (supportActionBar != null && !supportActionBar.isShowing()) {
+                supportActionBar.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void setActivityCallback() {
@@ -122,7 +148,7 @@ public abstract class MusicFragment extends Fragment implements
 
             @Override
             public void onMenuPressed() {
-                toggleActionBarVisibility();
+//                toggleActionBarVisibility();
             }
         });
     }
@@ -157,7 +183,6 @@ public abstract class MusicFragment extends Fragment implements
         mTracksAdapter = new TracksAdapter(new ArrayList<TrackItem>());
         mRecyclerView.setAdapter(mTracksAdapter);
         setupTouchHolderHelper();
-//        onBackPressed(mCurrentDir);
         onCreateView();
         return mView;
     }
@@ -172,7 +197,7 @@ public abstract class MusicFragment extends Fragment implements
     public void setUserVisibleHint(boolean isVisibleToUser) {
         if (isVisibleToUser && mIsViewLoaded) {
             setActivityCallback();
-            toggleActionBarVisibility();
+            showActionBar();
         }
     }
 
@@ -301,8 +326,52 @@ public abstract class MusicFragment extends Fragment implements
         }
     }
 
+    protected void checkSdPermission() {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            return;
+        }
+
+        boolean hasSDPermissions = isHasSDPermissions();
+        if (hasSDPermissions) {
+            onSdCardPermissionGranted();
+
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_SDCARD);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_SDCARD:
+                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    Toast toast = Toast.makeText(getContext(),
+                            R.string.snackbar_sd_card_access, Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                } else {
+                    onSdCardPermissionGranted();
+
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    protected boolean isHasSDPermissions() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasReadSDPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (hasReadSDPermission == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected void setCurrentTrack(TrackItem trackItem) {
         mCurrentTrack = trackItem;
+        Preferences.setCurrentTrack(getContext(),trackItem);
     }
 
     public void playTrack(TrackItem trackItem, int newIndex) {
@@ -397,6 +466,23 @@ public abstract class MusicFragment extends Fragment implements
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.play_btn:
+                        DownloadManager dm = (DownloadManager)getContext().getSystemService(DOWNLOAD_SERVICE);
+                        List<TrackItem> selectedItems = mTracksAdapter.getSelectedItems(); // TODO: 25.06.2017 db + permiss + settings
+                        for (int i = 0; i < selectedItems.size(); i++) {
+                            TrackItem trackItem = selectedItems.get(i);
+                            DownloadManager.Request request = new DownloadManager.Request(
+                                    Uri.parse(trackItem.getFilePath()))
+                                    .setMimeType("audio/MP3")
+                                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                    .setTitle(String.format("%s - %s.mp3",trackItem.getTrackArtist(), trackItem.getTrackName()))
+                                    .setDescription("descript")
+                                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                                            String.format("%s - %s.mp3",trackItem.getTrackArtist(), trackItem.getTrackName()));;
+                            long enqueue = dm.enqueue(request);
+                        }
+                        mActionMode.finish();
+
                 }
                 return false;
             }

@@ -51,6 +51,8 @@ public class CardTracksHolder {
                 .substring(file.getName().lastIndexOf(".") + 1).toUpperCase();
         trackItem.setExtension(extension);
         trackItem.setHasInfo(false);
+        trackItem.setOnline(false);
+        trackItem.setRadio(false);
     }
 
     private FileFilter getFileFilter() {

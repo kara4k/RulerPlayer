@@ -4,8 +4,9 @@ package com.kara4k.moozic;
 import android.support.annotation.NonNull;
 
 import java.io.File;
+import java.io.Serializable;
 
-class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
+public class TrackItem extends SearchableItem implements Comparable<TrackItem>, Serializable {
 
     String mName;
     File mFile;
@@ -19,7 +20,8 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
     long mDate;
     String mBitrate;
     boolean mHasInfo;
-    boolean isOnline;
+    boolean mIsOnline;
+    boolean mIsRadio;
 
     public String getName() {
         return mName;
@@ -62,6 +64,14 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
         this.mTrackArtist = trackArtist;
     }
 
+    public boolean isRadio() {
+        return mIsRadio;
+    }
+
+    public void setRadio(boolean radio) {
+        mIsRadio = radio;
+    }
+
     public String getDuration() {
         return mDuration;
     }
@@ -83,11 +93,11 @@ class TrackItem extends SearchableItem implements Comparable<TrackItem>  {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return mIsOnline;
     }
 
     public void setOnline(boolean online) {
-        isOnline = online;
+        mIsOnline = online;
     }
 
     public void setDate(long date) {
