@@ -62,6 +62,8 @@ public class ZaycevFetchr {
             trackItems.add(trackItem);
         }
 
+        Log.e("ZaycevFetchr", "searchTracks: " + page);
+
         if (page == 1) {
             if (trackItems.size() < 20) {
                 return trackItems;

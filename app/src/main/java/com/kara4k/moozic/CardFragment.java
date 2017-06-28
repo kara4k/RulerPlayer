@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +19,7 @@ import java.util.List;
 public class CardFragment extends MusicFragment
         implements SearchView.OnQueryTextListener, Player.PlayerListCallback {
 
+    public static final int SHOW_TRACKS = 1;
 
     private File mCurrentDir;
     private CardTracksHolder mCardTracksHolder;
@@ -32,7 +37,7 @@ public class CardFragment extends MusicFragment
         mSearchableItems = new ArrayList<>();
         mCardTracksHolder = new CardTracksHolder(getContext());
         setupTrackInfoReceiver();
-        checkSdPermission();
+        checkSdPermission(SHOW_TRACKS);
     }
 
     @Override
@@ -47,7 +52,7 @@ public class CardFragment extends MusicFragment
 
     @Override
     void onPlayBtnPressed() {
-        if (mCurrentTrack == null ) return;
+        if (mCurrentTrack == null) return;
         mCardCallbacks.onPlayPressed(mCurrentTrack);
         if (mCurrentDir == null || mCurrentTrack.isOnline()) return;
         File parentFile = mCurrentTrack.getFile().getParentFile();
@@ -89,8 +94,35 @@ public class CardFragment extends MusicFragment
     }
 
     @Override
-    void onSdCardPermissionGranted() {
-        setCurrentDir();
+    void onSdCardPermissionGranted(int requestCode) {
+        switch (requestCode) {
+            case SHOW_TRACKS:
+                setCurrentDir();
+                break;
+        }
+    }
+
+    @Override
+    void lastButtonPressed() {
+        boolean isPlaylist = Preferences.isPlaylist(getContext());
+        Log.e("CardFragment", "lastButtonPressed: " + isPlaylist);
+        if (!isPlaylist) {
+            mTracksAdapter.setITEMs(PlaylistHolder.getInstance(getContext()).getItems());
+            mTracksAdapter.notifyDataSetChanged();
+        } else {
+            updateUI(mCurrentTrack.getFile().getParentFile());
+        }
+        Preferences.setPlaylist(getContext(), !isPlaylist);
+    }
+
+    @Override
+    void onActionModeCreate(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+    }
+
+    @Override
+    void onActionMenuClicked(ActionMode mode, MenuItem item) {
+
     }
 
     private void updateUI(File dir) {

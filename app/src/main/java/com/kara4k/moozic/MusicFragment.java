@@ -2,12 +2,10 @@ package com.kara4k.moozic;
 
 
 import android.Manifest;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -41,13 +39,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
-
 public abstract class MusicFragment extends Fragment implements
         Player.PlayerListCallback, SearchView.OnQueryTextListener {
 
-
-    public static final int PERMISSION_SDCARD = 1;
 
     public static final int SORT_BY_NAME = 1;
     public static final int SORT_BY_ARTIST = 2;
@@ -104,7 +98,13 @@ public abstract class MusicFragment extends Fragment implements
 
     abstract boolean onQuerySearchSubmit(String text);
 
-    abstract void onSdCardPermissionGranted();
+    abstract void onSdCardPermissionGranted(int requestCode);
+
+    abstract void lastButtonPressed();
+
+    abstract void onActionModeCreate(ActionMode mode, Menu menu);
+
+    abstract void onActionMenuClicked(ActionMode mode, MenuItem item);
 
 
     @Override
@@ -121,7 +121,7 @@ public abstract class MusicFragment extends Fragment implements
         try {
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             ActionBar supportActionBar = activity.getSupportActionBar();
-             if (supportActionBar != null && !supportActionBar.isShowing()) {
+            if (supportActionBar != null && !supportActionBar.isShowing()) {
                 supportActionBar.show();
             }
         } catch (Exception e) {
@@ -223,6 +223,8 @@ public abstract class MusicFragment extends Fragment implements
         Menu bottomMenu = mBottomBar.getMenu();
         inflater.inflate(R.menu.menu_card_controls, bottomMenu);
 
+        onBottomBarCreated(bottomMenu);
+
         boolean isRepeatOne = Preferences.isRepeatOne(getContext());
         setRepeatBtnIcon(isRepeatOne);
 
@@ -235,6 +237,10 @@ public abstract class MusicFragment extends Fragment implements
             });
         }
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    protected void onBottomBarCreated(Menu menu) {
+
     }
 
     @Override
@@ -270,7 +276,8 @@ public abstract class MusicFragment extends Fragment implements
             case R.id.sort_btn:
                 showSortDialog();
                 return true;
-            case R.id.folders_btn:
+            case R.id.last_btn:
+                lastButtonPressed();
                 return true;
             case R.id.menu_item_swap_positions:
                 mIsSwapMode = !mIsSwapMode;
@@ -326,38 +333,32 @@ public abstract class MusicFragment extends Fragment implements
         }
     }
 
-    protected void checkSdPermission() {
+    protected void checkSdPermission(int request) {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return;
         }
 
         boolean hasSDPermissions = isHasSDPermissions();
         if (hasSDPermissions) {
-            onSdCardPermissionGranted();
+            onSdCardPermissionGranted(request);
 
         } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_SDCARD);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, request);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_SDCARD:
-                if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    Toast toast = Toast.makeText(getContext(),
-                            R.string.snackbar_sd_card_access, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                } else {
-                    onSdCardPermissionGranted();
-
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+            Toast toast = Toast.makeText(getContext(),
+                    R.string.snackbar_sd_card_access, Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        } else {
+            onSdCardPermissionGranted(requestCode);
         }
     }
+
 
     protected boolean isHasSDPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -371,7 +372,7 @@ public abstract class MusicFragment extends Fragment implements
 
     protected void setCurrentTrack(TrackItem trackItem) {
         mCurrentTrack = trackItem;
-        Preferences.setCurrentTrack(getContext(),trackItem);
+        Preferences.setCurrentTrack(getContext(), trackItem);
     }
 
     public void playTrack(TrackItem trackItem, int newIndex) {
@@ -454,7 +455,7 @@ public abstract class MusicFragment extends Fragment implements
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 mModeListener.onActionModeStart();
-                mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+                onActionModeCreate(mode, menu);
                 return true;
             }
 
@@ -465,25 +466,7 @@ public abstract class MusicFragment extends Fragment implements
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.play_btn:
-                        DownloadManager dm = (DownloadManager)getContext().getSystemService(DOWNLOAD_SERVICE);
-                        List<TrackItem> selectedItems = mTracksAdapter.getSelectedItems(); // TODO: 25.06.2017 db + permiss + settings
-                        for (int i = 0; i < selectedItems.size(); i++) {
-                            TrackItem trackItem = selectedItems.get(i);
-                            DownloadManager.Request request = new DownloadManager.Request(
-                                    Uri.parse(trackItem.getFilePath()))
-                                    .setMimeType("audio/MP3")
-                                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                    .setTitle(String.format("%s - %s.mp3",trackItem.getTrackArtist(), trackItem.getTrackName()))
-                                    .setDescription("descript")
-                                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-                                            String.format("%s - %s.mp3",trackItem.getTrackArtist(), trackItem.getTrackName()));;
-                            long enqueue = dm.enqueue(request);
-                        }
-                        mActionMode.finish();
-
-                }
+                onActionMenuClicked(mode, item);
                 return false;
             }
 

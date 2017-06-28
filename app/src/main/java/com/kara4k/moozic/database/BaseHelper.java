@@ -21,20 +21,23 @@ public class BaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("create table " + SearchTracks.NAME + "(" +
+        db.execSQL("create table " + Playlist.NAME + "(" +
                 " _id integer primary key autoincrement, " +
-                SearchTracks.Cols.NAME + ", " +
-                SearchTracks.Cols.TRACK_FILE + ", " +
-                SearchTracks.Cols.FILE_PATH + ", " +
-                SearchTracks.Cols.TRACK_NAME + ", " +
-                SearchTracks.Cols.TRACK_ARTIST + ", " +
-                SearchTracks.Cols.DURATION_MS + ", " +
-                SearchTracks.Cols.DURATION + ", " +
-                SearchTracks.Cols.EXTENSION + ", " +
-                SearchTracks.Cols.DATE + ", " +
-                SearchTracks.Cols.BITRATE + ", " +
-                SearchTracks.Cols.IS_RADIO + ", " +
-                SearchTracks.Cols.POSITION + " integer)"
+                Playlist.Cols.NAME + ", " +
+                Playlist.Cols.TRACK_FILE + ", " +
+                Playlist.Cols.FILE_PATH + ", " +
+                Playlist.Cols.TRACK_NAME + ", " +
+                Playlist.Cols.TRACK_ARTIST + ", " +
+                Playlist.Cols.DURATION_MS + ", " +
+                Playlist.Cols.DURATION + ", " +
+                Playlist.Cols.EXTENSION + ", " +
+                Playlist.Cols.DATE + ", " +
+                Playlist.Cols.BITRATE + ", " +
+                Playlist.Cols.IS_RADIO + " integer, " +
+                Playlist.Cols.IS_ONLINE + " integer, " +
+                Playlist.Cols.PLAYLIST + " integer, " +
+                Playlist.Cols.SOME_STUFF + " integer, " +
+                Playlist.Cols.POSITION + " integer)"
         );
 
 

@@ -1,8 +1,10 @@
 package com.kara4k.moozic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -21,11 +23,12 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPlayer = new Player(this);
+        startService(new Intent(this, MusicService.class));
     }
 
     @Override
     protected Fragment getFirstFragment() {
-        return ViewPagerSearchFragment.newInstance();
+        return ViewPagerCardFragment.newInstance();
     }
 
     @Override
@@ -82,8 +85,10 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mPlayer.release();
+        Log.e("MoozicActivity", "onDestroy: " + "here");
+        stopService(new Intent(this, MusicService.class)); // TODO: 28.06.2017 Another process
+        super.onDestroy();
     }
 
     @Override

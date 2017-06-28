@@ -14,11 +14,11 @@ import java.io.ObjectOutputStream;
 public class Preferences {
 
     public static final String CURRENT_TRACK = "current_track";
-    public static final String HAS_NO_CURRENT = "has_no_current";
-
     public static final String REPEAT_ONE = "repeat_one";
-
     public static final String SORT_ORDER = "sort_order";
+    public static final String PLAYLIST = "playlist";
+
+
 
 
     public static void setCurrentTrack(final Context context, final TrackItem trackItem) {
@@ -52,6 +52,16 @@ public class Preferences {
             trackItem = null;
         }
         return trackItem;
+    }
+
+    public static void setPlaylist(Context context, boolean playlist) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        sp.edit().putBoolean(PLAYLIST, playlist).apply();
+    }
+
+    public static boolean isPlaylist(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(PLAYLIST, false);
     }
 
 //    public static TrackItem getCurrentTrack(Context context) {

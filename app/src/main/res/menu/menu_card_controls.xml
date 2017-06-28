@@ -32,9 +32,9 @@
         app:showAsAction="always"
         />
     <item
-        android:id="@+id/folders_btn"
+        android:id="@+id/last_btn"
         android:icon="@drawable/ic_folder_special_white_24dp"
-        android:title="Favourites"
+        android:title="Playlist"
         app:showAsAction="always"/>
 
 </menu>

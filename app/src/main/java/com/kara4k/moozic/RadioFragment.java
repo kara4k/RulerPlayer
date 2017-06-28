@@ -2,6 +2,9 @@ package com.kara4k.moozic;
 
 
 import android.os.Bundle;
+import android.support.v7.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 
@@ -31,6 +34,7 @@ public class RadioFragment extends MusicFragment {
         trackItem.setOnline(true);
         trackItem.setHasInfo(true);
         trackItem.setTrack(true);
+        trackItem.setRadio(true);
         ArrayList<TrackItem> trackItems = new ArrayList<>();
         trackItems.add(trackItem);
         TrackItem trackItem2 = new TrackItem();
@@ -45,6 +49,7 @@ public class RadioFragment extends MusicFragment {
         trackItem2.setOnline(true);
         trackItem2.setHasInfo(true);
         trackItem2.setTrack(true);
+        trackItem2.setRadio(true);
         trackItems.add(trackItem2);
 //        trackItems.add(trackItem);
         mTracksAdapter.setITEMs(trackItems);
@@ -83,7 +88,29 @@ public class RadioFragment extends MusicFragment {
     }
 
     @Override
-    void onSdCardPermissionGranted() {
+    void onSdCardPermissionGranted(int requestCode) {
+
+    }
+
+    @Override
+    protected void onBottomBarCreated(Menu menu) {
+        MenuItem lastBtn = menu.findItem(R.id.last_btn);
+        lastBtn.setTitle("Add radio");
+        lastBtn.setIcon(R.drawable.ic_add_white_24dp);
+    }
+
+    @Override
+    void lastButtonPressed() {
+
+    }
+
+    @Override
+    void onActionModeCreate(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+    }
+
+    @Override
+    void onActionMenuClicked(ActionMode mode, MenuItem item) {
 
     }
 }

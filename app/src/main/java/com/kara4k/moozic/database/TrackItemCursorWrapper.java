@@ -8,7 +8,7 @@ import com.kara4k.moozic.TrackItem;
 
 import java.io.File;
 
-import static com.kara4k.moozic.database.DbSchemes.SearchTracks;
+import static com.kara4k.moozic.database.DbSchemes.Playlist;
 
 public class TrackItemCursorWrapper extends CursorWrapper {
 
@@ -17,29 +17,35 @@ public class TrackItemCursorWrapper extends CursorWrapper {
     }
 
     public TrackItem getTrackItem() {
-        String name = getString(getColumnIndex(SearchTracks.Cols.NAME));
-        String trackFile = getString(getColumnIndex(SearchTracks.Cols.TRACK_FILE));
-        String filePath = getString(getColumnIndex(SearchTracks.Cols.FILE_PATH));
-        String trackName = getString(getColumnIndex(SearchTracks.Cols.TRACK_NAME));
-        String trackArtist = getString(getColumnIndex(SearchTracks.Cols.TRACK_ARTIST));
-        int durationMs = getInt(getColumnIndex(SearchTracks.Cols.DURATION_MS));
-        String duration = getString(getColumnIndex(SearchTracks.Cols.DURATION));
-        String extension = getString(getColumnIndex(SearchTracks.Cols.EXTENSION));
-        long date = getLong(getColumnIndex(SearchTracks.Cols.DATE));
-        String bitrate = getString(getColumnIndex(SearchTracks.Cols.BITRATE));
-        int isRadio = (getColumnIndex(SearchTracks.Cols.IS_RADIO));
+        String name = getString(getColumnIndex(Playlist.Cols.NAME));
+        String trackFile = getString(getColumnIndex(Playlist.Cols.TRACK_FILE));
+        String filePath = getString(getColumnIndex(Playlist.Cols.FILE_PATH));
+        String trackName = getString(getColumnIndex(Playlist.Cols.TRACK_NAME));
+        String trackArtist = getString(getColumnIndex(Playlist.Cols.TRACK_ARTIST));
+        int durationMs = getInt(getColumnIndex(Playlist.Cols.DURATION_MS));
+        String duration = getString(getColumnIndex(Playlist.Cols.DURATION));
+        String extension = getString(getColumnIndex(Playlist.Cols.EXTENSION));
+        long date = getLong(getColumnIndex(Playlist.Cols.DATE));
+        String bitrate = getString(getColumnIndex(Playlist.Cols.BITRATE));
+        int isRadio = (getColumnIndex(Playlist.Cols.IS_RADIO));
+        int isOnline = (getColumnIndex(Playlist.Cols.IS_ONLINE));
 
-        int position = getInt(getColumnIndex(SearchTracks.Cols.POSITION));
 
-        File file = new File(trackFile);
-        if (!file.exists()) return null;
+
+//        if (!file.exists()) return null;
 
         TrackItem item = new TrackItem();
         item.setTrack(true);
-        item.setOnline(false);
+        item.setHasInfo(true);
+        item.setOnline(isOnline == 1);
         item.setRadio(isRadio == 1);
         item.setName(name);
-        item.setFile(file);
+        if (trackFile!=null) {
+            File file = new File(trackFile);
+            if (file.exists()) {
+                item.setFile(file);
+            }
+        }
         item.setFilePath(filePath);
         item.setTrackName(trackName);
         item.setTrackArtist(trackArtist);

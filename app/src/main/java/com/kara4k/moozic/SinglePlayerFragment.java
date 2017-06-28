@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,8 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     private TextView mTrackArtistTextView;
     private RulerCycleView mRulerCycleView;
     private LinearLayout mCycleLayout;
+    private LinearLayout mDurationLayout;
+    private boolean mIsRadio;
 
 
     public static SinglePlayerFragment newInstance() {
@@ -89,7 +90,8 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
         Button finishCycleBtn = (Button) view.findViewById(R.id.finish_cycle_button);
         finishCycleBtn.setOnClickListener(this);
         mCycleLayout = (LinearLayout) view.findViewById(R.id.cycle_layout);
-//        initLastTrack();
+        mDurationLayout = (LinearLayout) view.findViewById(R.id.duration_layout);
+        initLastTrack();
         return view;
     }
 
@@ -98,15 +100,38 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
         if (lastTrack == null) {
             return;
         }
+
         setTrackName(lastTrack);
         setTrackDuration(lastTrack);
+
+        if (mPlayer != null && mPlayer.isPlaying()) {
+            mPlayImgBtn.setImageResource(R.drawable.ic_pause_white_48dp);
+        }
+
+        setupRadioViewsVisibility(lastTrack.isRadio());
+
+        if (lastTrack.isRadio()) {
+            return;
+        }
+
         mDurationTextView.setText(lastTrack.getDuration());
         if (lastTrack.getDurationMs() == -1) {
             return;
         }
         mSeekBar.setMax(lastTrack.getDurationMs());
-        if (mPlayer != null && mPlayer.isPlaying()) {
-            mPlayImgBtn.setImageResource(R.drawable.ic_pause_white_48dp);
+
+    }
+
+    private void setupRadioViewsVisibility(boolean isRadio) {
+        mIsRadio = isRadio;
+        if (isRadio) {
+            mDurationLayout.setVisibility(View.GONE);
+            mSeekBar.setVisibility(View.GONE);
+            mRulerView.setVisibility(View.GONE);
+        } else {
+            mDurationLayout.setVisibility(View.VISIBLE);
+            mSeekBar.setVisibility(View.VISIBLE);
+            mRulerView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -135,6 +160,9 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
 
             @Override
             public void onMenuPressed() {
+                if (mIsRadio) {
+                    return;
+                }
                 int visibility = mRulerCycleView.getVisibility();
                 if (visibility == View.VISIBLE) {
                     mRulerCycleView.setVisibility(View.GONE);
@@ -187,6 +215,13 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
                 mRulerView.stopBuffering();
                 setTrackName(trackItem);
                 setTrackDuration(trackItem);
+
+                setupRadioViewsVisibility(trackItem.isRadio());
+
+                if (mIsRadio) {
+                    return;
+                }
+
                 mSeekBar.setMax(mPlayer.getDuration());
                 mDurationTextView.setText(trackItem.getDuration());
                 mRulerView.invalidate();
@@ -218,7 +253,6 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
 
     @Override
     public void onPlay() {
-        Log.e("SinglePlayerFragment", "onPlay: " + mPlayer.getDuration());
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
