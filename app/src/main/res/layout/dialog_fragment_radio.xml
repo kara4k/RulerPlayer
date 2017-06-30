@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginTop="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        android:layout_width="match_parent"
+        android:text="Name:"
+        android:textColor="@android:color/white"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/radio_name_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        />
+    <TextView
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginTop="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:text="Description:"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/radio_desc_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        />
+    <TextView
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginTop="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        android:layout_width="match_parent"
+        android:text="Radio url:"
+        android:textColor="@android:color/white"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/radio_path_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_marginRight="@dimen/dimen_default"
+        />
+
+</LinearLayout>
+</ScrollView>

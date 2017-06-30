@@ -3,6 +3,7 @@ package com.kara4k.moozic.database;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;
+import android.util.Log;
 
 import com.kara4k.moozic.TrackItem;
 
@@ -27,8 +28,12 @@ public class TrackItemCursorWrapper extends CursorWrapper {
         String extension = getString(getColumnIndex(Playlist.Cols.EXTENSION));
         long date = getLong(getColumnIndex(Playlist.Cols.DATE));
         String bitrate = getString(getColumnIndex(Playlist.Cols.BITRATE));
-        int isRadio = (getColumnIndex(Playlist.Cols.IS_RADIO));
-        int isOnline = (getColumnIndex(Playlist.Cols.IS_ONLINE));
+        int isRadio = getInt(getColumnIndex(Playlist.Cols.IS_RADIO));
+        int isOnline = getInt(getColumnIndex(Playlist.Cols.IS_ONLINE));
+
+        int position = getInt(getColumnIndex(Playlist.Cols.POSITION));
+        Log.e("TrackItemCursorWrapper", "getTrackItem: " + trackName);
+        Log.e("TrackItemCursorWrapper", "getTrackItem: " + position);
 
 
 

@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.kara4k.moozic.database.BaseHelper;
 import com.kara4k.moozic.database.TrackItemCursorWrapper;
@@ -35,13 +34,50 @@ public class PlaylistHolder {
     public void addTracks(List<TrackItem> trackItems) {
         for (int i = 0; i < trackItems.size(); i++) {
             TrackItem trackItem = trackItems.get(i);
-            Log.e("PlaylistHolder", "addTracks: " + trackItem.getTrackName());
-            Log.e("PlaylistHolder", "addTracks: " + trackItem.getTrackArtist());
-            ContentValues values = getContentValues(trackItem, i);
-            mDatabase.insert(Playlist.NAME, null, values);
+            boolean isExist = isExist(trackItem);
+            if (!isExist) {
+                ContentValues values = getContentValues(trackItem, i);
+                mDatabase.insert(Playlist.NAME, null, values);
+            }
         }
 
     }
+
+
+
+    public void getRadioItems() {
+
+    }
+
+    public void updateItemsPositions(List<TrackItem> items){
+        for (int i = 0; i < items.size(); i++) {
+            updateItemPosition(items.get(i), i);
+        }
+    }
+
+
+    public void updateItemPosition(TrackItem trackItem, int position) {
+        String filePath = trackItem.getFilePath();
+        ContentValues values = new ContentValues();
+        values.put(Playlist.Cols.POSITION, position);
+        mDatabase.update(Playlist.NAME, values, Playlist.Cols.FILE_PATH + " = ?", new String[]{filePath});
+    }
+
+
+
+    public boolean isExist(TrackItem trackItem) {
+        String clause = Playlist.Cols.FILE_PATH + " = ?";
+        String[] args = new String[]{trackItem.getFilePath()};
+        Cursor cursor = mDatabase.query(Playlist.NAME, null, clause, args, null, null, null);
+        return cursor.moveToFirst();
+    }
+
+    public void deleteItems(List<TrackItem> trackItems) {
+        for (int i = 0; i < trackItems.size(); i++) {
+            deleteItem(trackItems.get(i));
+        }
+    }
+
 
     public void deleteItem(TrackItem trackItem) {
         String filePath = String.valueOf(trackItem.getFilePath());
@@ -49,7 +85,7 @@ public class PlaylistHolder {
                 new String[]{filePath});
     }
 
-    public void deleteAllItems(){
+    public void deleteAllItems() {
         mDatabase.delete(Playlist.NAME, null, null);
     }
 
@@ -59,7 +95,6 @@ public class PlaylistHolder {
         if (cursorWrapper.moveToFirst()) {
             while (!cursorWrapper.isAfterLast()) {
                 tracks.add(cursorWrapper.getTrackItem());
-                Log.e("PlaylistHolder", "getItems: " + "get");
                 cursorWrapper.moveToNext();
             }
         }
@@ -75,9 +110,7 @@ public class PlaylistHolder {
 
 
 
-
-
-    private static ContentValues getContentValues(TrackItem trackItem, int position){
+    static ContentValues getContentValues(TrackItem trackItem, int position) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Playlist.Cols.NAME, trackItem.getName());
         if (trackItem.getFile() != null) {

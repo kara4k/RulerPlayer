@@ -1,15 +1,19 @@
 package com.kara4k.moozic;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,11 +24,14 @@ public class CardFragment extends MusicFragment
         implements SearchView.OnQueryTextListener, Player.PlayerListCallback {
 
     public static final int SHOW_TRACKS = 1;
+    public static final int DELETE_FILES = 2;
 
     private File mCurrentDir;
     private CardTracksHolder mCardTracksHolder;
     private TrackInfoParser mTrackInfoParser;
     private List<TrackItem> mSearchableItems;
+    private boolean mIsPlaylist;
+    private MenuItem mPlaylistBtn;
 
 
     public static CardFragment newInstance() {
@@ -37,18 +44,24 @@ public class CardFragment extends MusicFragment
         mSearchableItems = new ArrayList<>();
         mCardTracksHolder = new CardTracksHolder(getContext());
         setupTrackInfoReceiver();
+        mIsPlaylist = Preferences.isPlaylist(getContext());
+        Log.e("CardFragment", "onCreate: " + mIsPlaylist);
         checkSdPermission(SHOW_TRACKS);
     }
 
     @Override
     void onCreateView() {
         updateUI(mCurrentDir);
+        scrollToCurrentTrack();
     }
 
     @Override
     void onBackPressed() {
-        updateUI(mCurrentDir.getParentFile());
+        if (!mIsPlaylist) {
+            updateUI(mCurrentDir.getParentFile());
+        }
     }
+
 
     @Override
     void onPlayBtnPressed() {
@@ -59,7 +72,12 @@ public class CardFragment extends MusicFragment
         if (!mCurrentDir.getPath().equals(parentFile.getPath())) {
             updateUI(parentFile);
         }
+        scrollToCurrentTrack();
+    }
+
+    private void scrollToCurrentTrack() {
         int currentIndex = mTracksAdapter.getCurrentIndex();
+        Log.e("CardFragment", "scrollToCurrentTrack: " + currentIndex);
         if (currentIndex == -1) return;
         mLayoutManager.scrollToPosition(currentIndex);
     }
@@ -99,30 +117,130 @@ public class CardFragment extends MusicFragment
             case SHOW_TRACKS:
                 setCurrentDir();
                 break;
+            case DELETE_FILES:
+                deleteSelectedFiles();
+                break;
+        }
+    }
+
+    private void deleteSelectedFiles() {
+        List<TrackItem> selectedItems = mTracksAdapter.getSelectedItems();
+        for (int i = 0; i < selectedItems.size(); i++) {
+            TrackItem trackItem = selectedItems.get(i);
+            boolean deleted = trackItem.getFile().delete();
+            if (!deleted) {
+                Toast toast = Toast.makeText(getContext()
+                        , getString(R.string.toast_cant_delete_file) + trackItem.getName()
+                        , Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        }
+        finishActionMode();
+        updateUI(mCurrentDir);
+    }
+
+    @Override
+    protected void onBottomBarCreated(Menu menu) {
+        mPlaylistBtn = menu.findItem(R.id.last_btn);
+        setPlaylistBtnIcon();
+    }
+
+    private void setPlaylistBtnIcon() {
+        if (mIsPlaylist) {
+            mPlaylistBtn.setIcon(R.drawable.ic_folder_special_white_24dp);
+        } else {
+            mPlaylistBtn.setIcon(R.drawable.ic_playlist_play_white_24dp);
         }
     }
 
     @Override
     void lastButtonPressed() {
-        boolean isPlaylist = Preferences.isPlaylist(getContext());
-        Log.e("CardFragment", "lastButtonPressed: " + isPlaylist);
-        if (!isPlaylist) {
-            mTracksAdapter.setITEMs(PlaylistHolder.getInstance(getContext()).getItems());
-            mTracksAdapter.notifyDataSetChanged();
+        if (mActionMode != null || mIsSwapMode) return;
+        if (!mIsPlaylist) {
+            showPlaylist();
         } else {
-            updateUI(mCurrentTrack.getFile().getParentFile());
+            if (mCurrentTrack != null && mCurrentTrack.getFile() != null) {
+                updateUI(mCurrentTrack.getFile().getParentFile());
+                scrollToCurrentTrack();
+            } else { // TODO: 30.06.2017 default dir
+                updateUI(Environment.getExternalStorageDirectory());
+            }
         }
-        Preferences.setPlaylist(getContext(), !isPlaylist);
+        mIsPlaylist = !mIsPlaylist;
+        Preferences.setPlaylist(getContext(), mIsPlaylist);
+        setPlaylistBtnIcon();
     }
 
     @Override
+    protected void onSwapModeFinished() {
+        if (mIsPlaylist) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        PlaylistHolder.getInstance(getContext()).updateItemsPositions(mTracksAdapter.getAllItems());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        }
+    }
+
+    private void showPlaylist() {
+        mTracksAdapter.setITEMs(PlaylistHolder.getInstance(getContext()).getItems());
+        mTracksAdapter.notifyDataSetChanged();
+    }
+
+
+    @Override
     void onActionModeCreate(ActionMode mode, Menu menu) {
-        mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+        mode.getMenuInflater().inflate(R.menu.menu_actions_card_fragment, menu);
+        if (mIsPlaylist) {
+            menu.findItem(R.id.menu_item_delete_file).setVisible(false);
+            menu.findItem(R.id.menu_item_playlist_add).setVisible(false);
+        } else {
+            menu.findItem(R.id.menu_item_playlist_remove).setVisible(false);
+        }
     }
 
     @Override
     void onActionMenuClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_select_all:
+                mTracksAdapter.selectAll();
+                break;
+            case R.id.menu_item_playlist_add:
+                PlaylistHolder.getInstance(getContext())
+                        .addTracks(mTracksAdapter.getSelectedItems());
+                finishActionMode();
+                break;
+            case R.id.menu_item_delete_file:
+                showDeleteFilesDialog();
+                break;
+            case R.id.menu_item_playlist_remove:
+                List<TrackItem> selectedItems = mTracksAdapter.getSelectedItems();
+                PlaylistHolder.getInstance(getContext()).deleteItems(selectedItems);
+                finishActionMode();
+                showPlaylist();
+                break;
+        }
+    }
 
+
+    private void showDeleteFilesDialog() {
+        new AlertDialog.Builder(getContext())
+                .setTitle(R.string.dialog_delete_files_title)
+                .setMessage(R.string.dialog_delete_files_message)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        checkSdPermission(DELETE_FILES);
+                    }
+                })
+                .create().show();
     }
 
     private void updateUI(File dir) {

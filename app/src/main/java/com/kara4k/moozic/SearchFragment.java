@@ -7,13 +7,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,9 +21,12 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class SearchFragment extends MusicFragment {
 
+    public static final int DOWNLOAD_TRACK = 1;
+
 
     private String mQuery;
     private int mPage = 1;
+    private boolean mIsSearch;
     private boolean mHasMore = true;
 
 
@@ -37,6 +38,12 @@ public class SearchFragment extends MusicFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+
+    @Override
     void onCreateView() {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -45,10 +52,13 @@ public class SearchFragment extends MusicFragment {
                     int itemCount = mLayoutManager.getItemCount();
                     int lastCompletelyVisible = mLayoutManager.findLastCompletelyVisibleItemPosition();
                     if (lastCompletelyVisible == itemCount - 1) {
-                        Log.e("SearchFragment", "onScrolled: " + mHasMore);
                         mPage++;
-                        if (mHasMore) {
-                            new TracksFetchr().execute(mQuery);
+                        if (mIsSearch) {
+                            if (mHasMore) {
+                                new TracksFetchr().execute(mQuery);
+                            }
+                        } else {
+                            new TracksFetchr().execute();
                         }
                     }
                 }
@@ -88,6 +98,7 @@ public class SearchFragment extends MusicFragment {
 
     @Override
     boolean onQuerySearchSubmit(String text) {
+        mIsSearch = true;
         mQuery = text;
         mPage = 1;
         mHasMore = true;
@@ -97,53 +108,62 @@ public class SearchFragment extends MusicFragment {
     }
 
     @Override
-    protected void onBottomBarCreated(Menu menu) { // TODO: 28.06.2017
+    protected void onBottomBarCreated(Menu menu) {
         MenuItem lastBtn = menu.findItem(R.id.last_btn);
-        lastBtn.setTitle("Categories");
-        lastBtn.setIcon(R.drawable.ic_list_white_24dp);
+        lastBtn.setTitle(R.string.last_btn_title_search_fragment);
+        lastBtn.setIcon(R.drawable.ic_format_list_numbered_white_24dp);
     }
 
     @Override
     void onSdCardPermissionGranted(int requestCode) {
+        switch (requestCode) {
+            case DOWNLOAD_TRACK:
+                downloadTracks();
+                finishActionMode();
+                break;
+        }
 
+    }
+
+    private void downloadTracks() {
+        DownloadManager dm = (DownloadManager) getContext().getSystemService(DOWNLOAD_SERVICE);
+        List<TrackItem> selectedItems = mTracksAdapter.getSelectedItems(); // TODO: 25.06.2017 db + permiss + settings
+        for (int i = 0; i < selectedItems.size(); i++) {
+            TrackItem trackItem = selectedItems.get(i);
+            DownloadManager.Request request = new DownloadManager.Request(
+                    Uri.parse(trackItem.getFilePath()))
+                    .setMimeType("audio/mp3")
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                    .setTitle(String.format("%s - %s.mp3", trackItem.getTrackArtist(), trackItem.getTrackName()))
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                            String.format("%s - %s.mp3", trackItem.getTrackArtist(), trackItem.getTrackName()));
+            dm.enqueue(request);
+        }
     }
 
 
     @Override
     void lastButtonPressed() {
-
+        mHasMore = true;
+        mIsSearch = false;
+        mPage = 1;
+        new TracksFetchr().execute();
     }
 
     @Override
     void onActionModeCreate(ActionMode mode, Menu menu) {
-        mode.getMenuInflater().inflate(R.menu.menu_action_mode, menu);
+        mode.getMenuInflater().inflate(R.menu.menu_actions_search_fragment, menu);
     }
 
     @Override
     void onActionMenuClicked(ActionMode mode, MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.play_btn:
-                DownloadManager dm = (DownloadManager) getContext().getSystemService(DOWNLOAD_SERVICE);
-                List<TrackItem> selectedItems = mTracksAdapter.getSelectedItems(); // TODO: 25.06.2017 db + permiss + settings
-                for (int i = 0; i < selectedItems.size(); i++) {
-                    TrackItem trackItem = selectedItems.get(i);
-                    DownloadManager.Request request = new DownloadManager.Request(
-                            Uri.parse(trackItem.getFilePath()))
-                            .setMimeType("audio/MP3")
-                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                            .setTitle(String.format("%s - %s.mp3", trackItem.getTrackArtist(), trackItem.getTrackName()))
-                            .setDescription("descript")
-                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
-                                    String.format("%s - %s.mp3", trackItem.getTrackArtist(), trackItem.getTrackName()));
-                    ;
-                    long enqueue = dm.enqueue(request);
-                }
+            case R.id.menu_item_select_all:
+                mTracksAdapter.selectAll();
                 break;
-
-            case R.id.pause_btn:
-                PlaylistHolder.getInstance(getContext()).addTracks(mTracksAdapter.getSelectedItems());
+            case R.id.menu_item_download_tracks:
+                checkSdPermission(DOWNLOAD_TRACK);
                 break;
-
         }
     }
 
@@ -161,6 +181,7 @@ public class SearchFragment extends MusicFragment {
                     mProgressDialog = new ProgressDialog(getContext());
                     mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     mProgressDialog.setMessage("Loading");
+                    mProgressDialog.setCancelable(false);
                     mProgressDialog.show();
                 }
             });
@@ -170,8 +191,11 @@ public class SearchFragment extends MusicFragment {
         @Override
         protected List<TrackItem> doInBackground(String... params) {
             try {
-                return ZaycevFetchr.searchTracks(params[0], mPage);
-            } catch (IOException | JSONException e) {
+                if (params.length == 0) {
+                    return ZaycevFetchr.getTracks(mPage);
+                }
+                return ZaycevFetchr.getTracks(params[0], mPage);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return null;
@@ -181,10 +205,7 @@ public class SearchFragment extends MusicFragment {
         protected void onPostExecute(List<TrackItem> trackItems) {
 
             try {
-                if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mProgressDialog.hide();
-                    mProgressDialog = null;
-                }
+                destroyDialog();
 
                 if (trackItems == null) {
                     trackItems = new ArrayList<>();
@@ -203,5 +224,13 @@ public class SearchFragment extends MusicFragment {
                 e.printStackTrace();
             }
         }
+
+        public void destroyDialog() {
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                mProgressDialog.hide();
+                mProgressDialog = null;
+            }
+        }
+
     }
 }

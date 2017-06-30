@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+
+import java.io.File;
 
 public class MoozicActivity extends DrawerActivity implements CardFragment.CardCallbacks, MusicFragment.ActionModeListener {
 
@@ -17,14 +20,45 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
         void onBackPressed();
 
         void onMenuPressed();
+
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPlayer = new Player(this);
-        startService(new Intent(this, MusicService.class));
+        startService(MusicService.newIntent(this));
+        startService(DestroyService.newIntent(this));
     }
+
+    @Override
+    protected void onStart() {
+        if (getIntent() != null) {
+            Preferences.setPlaylist(this, false);
+            if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
+                File file = new File(getIntent().getData().getPath());
+                if (file.exists()) {
+                    TrackItem trackItem = new TrackItem();
+                    CardTracksHolder.fillTrackData(trackItem, file);
+                    Tools.setTrackInfo(trackItem);
+                    Preferences.setCurrentTrack(this, trackItem);
+                    replaceFragment(ViewPagerCardFragment.newInstance());
+                    mNavigationView.getMenu().getItem(0).setChecked(true);
+                    onPlay(trackItem);
+                }
+            }
+            setIntent(null);
+        }
+        super.onStart();
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
 
     @Override
     protected Fragment getFirstFragment() {
@@ -87,21 +121,36 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
     protected void onDestroy() {
         mPlayer.release();
         Log.e("MoozicActivity", "onDestroy: " + "here");
-        stopService(new Intent(this, MusicService.class)); // TODO: 28.06.2017 Another process
+        stopService(MusicService.newIntent(this));
+        stopService(DestroyService.newIntent(this));
         super.onDestroy();
     }
 
     @Override
     public void onActionModeStart() {
-
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setViewPagerLock(true);
     }
 
     @Override
     public void onActionModeFinish() {
-
+        mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+        setViewPagerLock(false);
     }
 
-    public Player getPlayer(){
+    private void setViewPagerLock(boolean lock) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment == null) {
+            return;
+        }
+        if (fragment instanceof ViewPagerFragment) {
+            ViewPagerFragment viewPagerFragment = (ViewPagerFragment) fragment;
+            viewPagerFragment.setLocked(lock);
+        }
+    }
+
+
+    public Player getPlayer() {
         return mPlayer;
     }
 

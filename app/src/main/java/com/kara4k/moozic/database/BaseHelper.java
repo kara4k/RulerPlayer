@@ -40,6 +40,25 @@ public class BaseHelper extends SQLiteOpenHelper{
                 Playlist.Cols.POSITION + " integer)"
         );
 
+        db.execSQL("create table " + RadioList.NAME + "(" +
+                " _id integer primary key autoincrement, " +
+                Playlist.Cols.NAME + ", " +
+                Playlist.Cols.TRACK_FILE + ", " +
+                Playlist.Cols.FILE_PATH + ", " +
+                Playlist.Cols.TRACK_NAME + ", " +
+                Playlist.Cols.TRACK_ARTIST + ", " +
+                Playlist.Cols.DURATION_MS + ", " +
+                Playlist.Cols.DURATION + ", " +
+                Playlist.Cols.EXTENSION + ", " +
+                Playlist.Cols.DATE + ", " +
+                Playlist.Cols.BITRATE + ", " +
+                Playlist.Cols.IS_RADIO + " integer, " +
+                Playlist.Cols.IS_ONLINE + " integer, " +
+                Playlist.Cols.PLAYLIST + " integer, " +
+                Playlist.Cols.SOME_STUFF + " integer, " +
+                Playlist.Cols.POSITION + " integer)"
+        );
+
 
     }
 

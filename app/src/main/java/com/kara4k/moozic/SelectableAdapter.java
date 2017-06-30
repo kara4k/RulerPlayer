@@ -75,6 +75,22 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
         return items;
     }
 
+    public List<Integer> getSelectedIndexes() {
+        List<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < mSelectedItems.size(); i++) {
+            boolean isSelected = mSelectedItems.valueAt(i);
+            int key = mSelectedItems.keyAt(i);
+            if (isSelected) {
+                indexes.add(key);
+            }
+        }
+        return indexes;
+    }
+
+    protected void selectionChanged(){
+
+    }
+
     @Override
     public void toggleSelection(int position, boolean isSelected) {
         if (getActionMode() == null) {
@@ -84,6 +100,7 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
         mSelectedItems.put(position, isSelected);
         mSelectedItemsCount = isSelected ? ++mSelectedItemsCount : --mSelectedItemsCount;
         getActionMode().setTitle(String.valueOf(mSelectedItemsCount));
+        selectionChanged();
         if (mSelectedItemsCount == 0) {
             getActionMode().finish();
         }
@@ -98,19 +115,11 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
     }
 
     public boolean onItemMove(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(mITEMs, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(mITEMs, i, i - 1);
-            }
-        }
-
+        Collections.swap(mITEMs, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         return true;
     }
+
 
     public void setITEMs(List<ITEM> ITEMs) {
         mITEMs = ITEMs;

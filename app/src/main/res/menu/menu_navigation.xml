@@ -7,18 +7,18 @@
         <item
             android:id="@+id/navigation_item_card_fragment"
             android:icon="@drawable/ic_sd_card_white_24dp"
-            android:title="Player"
+            android:title="@string/navigation_item_files"
             />
         <item
             android:id="@+id/navigation_item_search_fragment"
             android:icon="@drawable/ic_search_white_24dp"
-            android:title="Search"
+            android:title="@string/navigation_item_search"
             />
 
         <item
             android:id="@+id/navigation_item_radio"
-            android:icon="@android:drawable/btn_radio"
-            android:title="Radio"
+            android:icon="@drawable/ic_radio_white_24dp"
+            android:title="@string/navigation_item_radio"
             />
 
         <!--<item-->

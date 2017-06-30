@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import static com.kara4k.moozic.TrackInfoParser.getDuration;
+
 public class SinglePlayerFragment extends Fragment implements Handler.Callback,
         Player.PlayerSingleCallback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
@@ -173,6 +175,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
                     mCycleLayout.setVisibility(View.VISIBLE);
                 }
             }
+
         });
     }
 
@@ -192,7 +195,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     public boolean handleMessage(Message message) {
         if (message.what == Player.PROGRESS) {
             int progress = message.arg1;
-            String progressString = TrackInfoParser.getDuration(String.valueOf(progress));
+            String progressString = getDuration(String.valueOf(progress));
             mSeekBar.setProgress(progress);
             mProgressTextView.setText(progressString);
         }
@@ -343,7 +346,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     public void onProgressChanged(SeekBar seekBar, int position, boolean isUser) {
         if (isUser) {
             mPlayer.seekTo(position);
-            String positionString = TrackInfoParser.getDuration(String.valueOf(position));
+            String positionString = getDuration(String.valueOf(position));
             mProgressTextView.setText(positionString);
             mRulerView.setBufferingStart();
         }

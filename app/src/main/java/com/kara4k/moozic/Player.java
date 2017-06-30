@@ -1,7 +1,10 @@
 package com.kara4k.moozic;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
@@ -53,12 +56,13 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         playOnInterrupt = false;
         mAudioManager = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        mContext.registerReceiver(headsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+
+
     }
 
     public void playToggle() {
-        if (mMediaPlayer == null) { // TODO: 25.06.2017 db current track
-//            TrackItem currentTrack = Preferences.getCurrentTrack(mContext);
-//            playTrack(currentTrack);
+        if (mMediaPlayer == null) {
             repeatCurrent();
         } else {
             togglePlayPause();
@@ -79,7 +83,6 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
                         public void onBufferingUpdate(MediaPlayer mp, int percent) {
                             if (mSingleFragHandler != null) {
                                 mSingleFragHandler.obtainMessage(BUFFERING, percent, 0).sendToTarget();
-                                Log.e("Player", "onBufferingUpdate: " + percent);
                             }
                         }
                     });
@@ -132,6 +135,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void play(TrackItem trackItem) {
+        Log.e("Player", "play: " + "here");
         if (mMediaPlayer == null) {
             playTrack(trackItem);
 
@@ -187,8 +191,13 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         }
     }
 
-    public boolean isPlaying(){
-        if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+    public boolean isPlaying() {
+        try {
+            if (mMediaPlayer == null || !mMediaPlayer.isPlaying()) {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -196,7 +205,6 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
 
     @Override
     public void onAudioFocusChange(int i) {
-        Log.e("Player", "onAudioFocusChange: " + "here");
         if (mMediaPlayer != null) {
             if (i <= 0 && i != -3) {
                 if (mMediaPlayer.isPlaying()) {
@@ -213,6 +221,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     public void release() {
         releaseMediaPlayer();
         mAudioManager.abandonAudioFocus(this);
+        mContext.unregisterReceiver(headsetReceiver);
     }
 
     private void releaseMediaPlayer() {
@@ -293,4 +302,23 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     public void setPlayerListCallback(PlayerListCallback playerListCallback) {
         mPlayerListCallback = playerListCallback;
     }
+
+    BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+                int state = intent.getIntExtra("state", -1);
+                switch (state) {
+                    case 0:
+                        pause();
+                        break;
+                    case 1:
+                        play();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 }

@@ -3,6 +3,7 @@ package com.kara4k.moozic;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -11,6 +12,10 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 public class MusicService extends Service {
+
+    public static Intent newIntent(Context context){
+        return new Intent(context, MusicService.class);
+    }
 
     private PowerManager.WakeLock mWakeLock;
 

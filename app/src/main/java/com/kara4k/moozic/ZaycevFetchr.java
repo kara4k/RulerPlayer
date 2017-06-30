@@ -23,11 +23,11 @@ public class ZaycevFetchr {
 
     private static ArrayList<String> stopArray;
 
-    public static final Uri ENDPOINT = Uri.parse("http://zaycev.net/search.html");
+    public static final Uri SEARCH_ENDPOINT = Uri.parse("http://zaycev.net/search.html");
+    public static final Uri TOP_ENDPOINT = Uri.parse("http://zaycev.net/top/more.html");
 
-    public static List<TrackItem> searchTracks(String query, int page) throws IOException, JSONException {
-
-        Document document = Jsoup.connect(createSearchUrl(query, page)).get();
+    private static List<TrackItem> parseTracks(String url) throws IOException {
+        Document document = Jsoup.connect(url).get();
         ArrayList<TrackItem> trackItems = new ArrayList<>();
         Elements tracks = document.getElementsByClass("musicset-track clearfix");
         for (int i = 0; i < tracks.size(); i++) {
@@ -61,22 +61,25 @@ public class ZaycevFetchr {
             trackItem.setTrack(true);
             trackItems.add(trackItem);
         }
+        return trackItems;
+    }
 
-        Log.e("ZaycevFetchr", "searchTracks: " + page);
+    public static List<TrackItem> getTracks(String query, int page) throws IOException {
+        List<TrackItem> list = parseTracks(createSearchUrl(query, page));
 
         if (page == 1) {
-            if (trackItems.size() < 20) {
-                return trackItems;
+            if (list.size() < 20) {
+                return list;
             } else {
                 stopArray = new ArrayList<>();
-                for (int i = 0; i < trackItems.size(); i++) {
-                    stopArray.add(trackItems.get(i).getDuration());
+                for (int i = 0; i < list.size(); i++) {
+                    stopArray.add(list.get(i).getDuration());
                 }
             }
         } else {
             boolean isEqualsFirstPage = true;
-            for (int i = 0; i < trackItems.size(); i++) {
-                if (!stopArray.get(i).equals(trackItems.get(i).getDuration())) {
+            for (int i = 0; i < list.size(); i++) {
+                if (!stopArray.get(i).equals(list.get(i).getDuration())) {
                     isEqualsFirstPage = false;
                     break;
                 }
@@ -85,9 +88,78 @@ public class ZaycevFetchr {
                 return null;
             }
         }
-        return trackItems;
-
+        return list;
     }
+
+    public static List<TrackItem> getTracks(int page) throws IOException {
+        List<TrackItem> list = parseTracks(createTopUrl(page));
+        return list;
+    }
+
+
+//    public static List<TrackItem> searchTracks(String query, int page) throws IOException, JSONException {
+//
+//        Document document = Jsoup.connect(createSearchUrl(query, page)).get();
+//        ArrayList<TrackItem> trackItems = new ArrayList<>();
+//        Elements tracks = document.getElementsByClass("musicset-track clearfix");
+//        for (int i = 0; i < tracks.size(); i++) {
+//            TrackItem trackItem = new TrackItem();
+//            Element element = tracks.get(i);
+//            int durationMs = Integer.parseInt(element.attr("data-duration")) * 1000;
+//            String extension = element.attr("data-dkey").split("\\.")[1].toUpperCase();
+//            String duration = element.getElementsByClass("musicset-track__duration").get(0).text();
+//            Element artistDiv = element.getElementsByClass("musicset-track__artist").get(0);
+//            String trackArtist = artistDiv.getElementsByTag("a").text();
+//            Element nameDiv = element.getElementsByClass("musicset-track__track-name").get(0);
+//            String trackName = nameDiv.getElementsByTag("a").text();
+//
+//            String dataUrl = String.format("http://zaycev.net%s", element.attr("data-url"));
+//
+//            try {
+//                setTrackUrl(trackItem, dataUrl);
+//            } catch (IOException | JSONException e) {
+//                e.printStackTrace();
+//                continue;
+//            }
+//
+//            trackItem.setTrackName(trackName);
+//            trackItem.setTrackArtist(trackArtist);
+//            trackItem.setDurationMs(durationMs);
+//            trackItem.setDuration(duration);
+//            trackItem.setExtension(extension);
+//            trackItem.setBitrate("");
+//            trackItem.setOnline(true);
+//            trackItem.setHasInfo(true);
+//            trackItem.setTrack(true);
+//            trackItems.add(trackItem);
+//        }
+//
+//        Log.e("ZaycevFetchr", "searchTracks: " + page);
+//
+//        if (page == 1) {
+//            if (trackItems.size() < 20) {
+//                return trackItems;
+//            } else {
+//                stopArray = new ArrayList<>();
+//                for (int i = 0; i < trackItems.size(); i++) {
+//                    stopArray.add(trackItems.get(i).getDuration());
+//                }
+//            }
+//        } else {
+//            boolean isEqualsFirstPage = true;
+//            for (int i = 0; i < trackItems.size(); i++) {
+//                if (!stopArray.get(i).equals(trackItems.get(i).getDuration())) {
+//                    isEqualsFirstPage = false;
+//                    break;
+//                }
+//            }
+//            if (isEqualsFirstPage) {
+//                return null;
+//            }
+//        }
+//        return trackItems;
+//
+//    }
 
 
     public static void setTrackUrl(final TrackItem trackItem, final String dataUrl) throws IOException, JSONException {
@@ -102,10 +174,17 @@ public class ZaycevFetchr {
     }
 
     private static String createSearchUrl(String query, int page) {
-        Uri.Builder builder = ENDPOINT.buildUpon()
+        Uri.Builder builder = SEARCH_ENDPOINT.buildUpon()
                 .appendQueryParameter("query_search", query)
                 .appendQueryParameter("page", String.valueOf(page));
         Log.e("ZaycevFetchr", "createSearchUrl: " + builder.build().toString());
+        return builder.build().toString();
+    }
+
+    private static String createTopUrl(int page){
+        Uri.Builder builder = TOP_ENDPOINT.buildUpon()
+                .appendQueryParameter("page", String.valueOf(page));
+        Log.e("ZaycevFetchr", "createTopUrl: " + builder.build().toString());
         return builder.build().toString();
     }
 

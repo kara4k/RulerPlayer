@@ -8,4 +8,13 @@
     <string name="sort_by_date">Date</string>
     <string name="sort_by_type">Type</string>
     <string name="toast_on_swap_mode">Long tap on item and drag to change position</string>
+    <string name="dialog_delete_files_title">Delete selected files</string>
+    <string name="dialog_delete_files_message">Selected files will be deleted from sdcard. This operation cannot be undone</string>
+    <string name="toast_cant_delete_file">Can\'t delete file</string>
+    <string name="last_btn_title_search_fragment">Top Rated</string>
+    <string name="dialog_add_radio_title">Radio:</string>
+    <string name="last_btn_add_radio_title">Add radio</string>
+    <string name="navigation_item_files">Files</string>
+    <string name="navigation_item_search">Search</string>
+    <string name="navigation_item_radio">Radio</string>
 </resources>

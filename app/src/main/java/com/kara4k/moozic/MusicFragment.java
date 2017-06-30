@@ -22,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -100,6 +101,8 @@ public abstract class MusicFragment extends Fragment implements
 
     abstract void onSdCardPermissionGranted(int requestCode);
 
+    abstract void onBottomBarCreated(Menu menu);
+
     abstract void lastButtonPressed();
 
     abstract void onActionModeCreate(ActionMode mode, Menu menu);
@@ -150,8 +153,10 @@ public abstract class MusicFragment extends Fragment implements
             public void onMenuPressed() {
 //                toggleActionBarVisibility();
             }
+
         });
     }
+
 
     private void toggleActionBarVisibility() {
         try {
@@ -176,7 +181,7 @@ public abstract class MusicFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.card_fragment, container, false);
+        mView = inflater.inflate(R.layout.music_fragment, container, false);
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -239,9 +244,6 @@ public abstract class MusicFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    protected void onBottomBarCreated(Menu menu) {
-
-    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -288,11 +290,17 @@ public abstract class MusicFragment extends Fragment implements
                     toast.show();
                 } else {
                     item.setIcon(R.drawable.ic_import_export_white_24dp);
+                    Log.e("MusicFragment", "onOptionsItemSelected: " + "finished");
+                    onSwapModeFinished();
                 }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected void onSwapModeFinished() {
+
     }
 
     private void showSortDialog() {
@@ -450,6 +458,7 @@ public abstract class MusicFragment extends Fragment implements
         }
     }
 
+
     private ActionMode.Callback getActionModeCallback() {
         return new ActionMode.Callback() {
             @Override
@@ -477,6 +486,16 @@ public abstract class MusicFragment extends Fragment implements
                 mModeListener.onActionModeFinish();
             }
         };
+    }
+
+    protected void finishActionMode() {
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
+    }
+
+    protected void onSelectionChanged() {
+
     }
 
 
@@ -529,16 +548,24 @@ public abstract class MusicFragment extends Fragment implements
             return mActionMode;
         }
 
+        @Override
+        protected void selectionChanged() {
+            onSelectionChanged();
+        }
 
         int getCurrentIndex() {
-            if (mCurrentTrack == null) {
+            return getIndex(mCurrentTrack);
+        }
+
+        int getIndex(TrackItem trackItem) {
+            if (trackItem == null) {
                 return -1;
             }
 
             int index = -1;
             for (int i = 0; i < mITEMs.size(); i++) {
                 String filePath = mITEMs.get(i).getFilePath();
-                if (filePath.equals(mCurrentTrack.getFilePath())) {
+                if (filePath.toLowerCase().equals(trackItem.getFilePath().toLowerCase())) {
                     index = i;
                     break;
                 }
@@ -546,11 +573,6 @@ public abstract class MusicFragment extends Fragment implements
             return index;
         }
 
-//        private TrackItem getCurrentTrack() {
-//            int currentIndex = getCurrentIndex();
-//            if (currentIndex == -1) return null;
-//            return mITEMs.get(currentIndex);
-//        }
 
         public void sortByName() {
             Collections.sort(mITEMs, new Comparator<TrackItem>() {
