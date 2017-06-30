@@ -1,7 +1,6 @@
 <resources>
     <string name="fileTypesPattern" translatable="false">(?i).*\\.(mp3|wav|ogg|flac|mid|3gp|mp4|m4a|flv|avi)</string>
     <string name="snackbar_sd_card_access">Access to SD-Card forbidden</string>
-    <string name="source_file_corrupted">Source file must be corrupted</string>
     <string name="dialog_sort_by_title">Sort by:</string>
     <string name="sort_by_name">Name</string>
     <string name="sort_by_artist">Artist</string>
