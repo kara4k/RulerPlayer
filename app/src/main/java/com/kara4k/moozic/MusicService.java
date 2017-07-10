@@ -1,7 +1,6 @@
 package com.kara4k.moozic;
 
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -28,8 +27,10 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.e("MusicService", "onCreate: " + "hh");
-        startForeground(1, new Notification()); // TODO: 28.06.2017
+        TrackItem currentTrack = Preferences.getCurrentTrack(getApplicationContext());
+        startForeground(NotificationManager.NOTIFICATION_ID
+                , new NotificationManager(getApplicationContext())
+                        .getNotification(null, currentTrack));
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "WakelockTag");
@@ -38,7 +39,6 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("MusicService", "onStartCommand: " + "kk");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -47,7 +47,7 @@ public class MusicService extends Service {
         super.onDestroy();
         mWakeLock.release();
         NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
-        nm.cancel(1);
+        nm.cancel(NotificationManager.NOTIFICATION_ID);
         Log.e("MusicService", "onDestroy: " + "finished");
     }
 }

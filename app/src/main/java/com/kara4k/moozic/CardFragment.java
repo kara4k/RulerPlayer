@@ -51,8 +51,12 @@ public class CardFragment extends MusicFragment
 
     @Override
     void onCreateView() {
-        updateUI(mCurrentDir);
-        scrollToCurrentTrack();
+        if (mIsPlaylist) {
+            showPlaylist();
+        } else {
+            updateUI(mCurrentDir);
+            scrollToCurrentTrack();
+        }
     }
 
     @Override
@@ -75,12 +79,6 @@ public class CardFragment extends MusicFragment
         scrollToCurrentTrack();
     }
 
-    private void scrollToCurrentTrack() {
-        int currentIndex = mTracksAdapter.getCurrentIndex();
-        Log.e("CardFragment", "scrollToCurrentTrack: " + currentIndex);
-        if (currentIndex == -1) return;
-        mLayoutManager.scrollToPosition(currentIndex);
-    }
 
     @Override
     void onTrackHolderClick(TrackItem trackItem, int newPosition) {

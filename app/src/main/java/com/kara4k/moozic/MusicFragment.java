@@ -303,6 +303,13 @@ public abstract class MusicFragment extends Fragment implements
 
     }
 
+    protected void scrollToCurrentTrack() {
+        int currentIndex = mTracksAdapter.getCurrentIndex();
+        Log.e("CardFragment", "scrollToCurrentTrack: " + currentIndex);
+        if (currentIndex == -1) return;
+        mLayoutManager.scrollToPosition(currentIndex);
+    }
+
     private void showSortDialog() {
         ContextThemeWrapper ctw = new ContextThemeWrapper(getContext(), R.style.AlertDialogStyle);
         String[] dialogItems = getContext().getResources().getStringArray(R.array.dialog_sort_by);

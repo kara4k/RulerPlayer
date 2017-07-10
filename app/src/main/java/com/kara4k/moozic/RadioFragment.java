@@ -34,6 +34,7 @@ public class RadioFragment extends MusicFragment {
 
     @Override
     void onCreateView() {
+        mCurrentTrack = Preferences.getCurrentTrack(getContext());
         updateUI();
     }
 
@@ -72,7 +73,9 @@ public class RadioFragment extends MusicFragment {
 
     @Override
     void onPlayBtnPressed() {
-
+        if (mCurrentTrack == null) return;
+        mCardCallbacks.onPlayPressed(mCurrentTrack);
+        scrollToCurrentTrack();
     }
 
     @Override
@@ -136,9 +139,9 @@ public class RadioFragment extends MusicFragment {
         trackItem.setTrackArtist(radioDesc);
         trackItem.setFilePath(radioPath);
         trackItem.setDurationMs(0);
-        trackItem.setDuration("");
-        trackItem.setExtension("");
-        trackItem.setBitrate("");
+        trackItem.setDuration(" ");
+        trackItem.setExtension(" ");
+        trackItem.setBitrate(" ");
         trackItem.setOnline(true);
         trackItem.setHasInfo(true);
         trackItem.setTrack(true);

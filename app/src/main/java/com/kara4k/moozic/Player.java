@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import static android.content.Context.AUDIO_SERVICE;
@@ -28,6 +29,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     private PlayerListCallback mPlayerListCallback;
     private boolean shouldStop = false;
     private Player mPlayer;
+    private NotificationManager mNotificationManager;
 
     interface PlayerSingleCallback {
         void onPlayTrack(TrackItem trackItem);
@@ -57,6 +59,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         mAudioManager = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         mContext.registerReceiver(headsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+        mNotificationManager = new NotificationManager(mContext);
 
 
     }
@@ -97,7 +100,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
                     }
 
                     startTracking();
-
+                    updateNotification(trackItem);
                 } catch (Exception e) {
                     stopTracking();
                     e.printStackTrace();
@@ -114,6 +117,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
             mPlayerSingleCallback.onPlay();
         }
         startTracking();
+        updateNotification(null);
     }
 
     public void playNext() {
@@ -155,6 +159,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
             mPlayerSingleCallback.onPauseTrack();
         }
         stopTracking();
+        updateNotification(null);
     }
 
     public void resume() {
@@ -170,6 +175,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
 
     public void togglePlayPause() {
         if (mMediaPlayer == null) {
+            mPlayerListCallback.repeatCurrent();
             return;
         }
         if (mMediaPlayer.isPlaying()) {
@@ -189,6 +195,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         if (mPlayerSingleCallback != null) {
             mPlayerSingleCallback.onStopTrack();
         }
+        updateNotification(null);
     }
 
     public boolean isPlaying() {
@@ -301,6 +308,12 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
 
     public void setPlayerListCallback(PlayerListCallback playerListCallback) {
         mPlayerListCallback = playerListCallback;
+    }
+
+    private void updateNotification(TrackItem trackItem) {
+        NotificationManagerCompat nm = NotificationManagerCompat.from(mContext);
+        nm.notify(NotificationManager.NOTIFICATION_ID
+                , mNotificationManager.getNotification(mMediaPlayer, trackItem));
     }
 
     BroadcastReceiver headsetReceiver = new BroadcastReceiver() {

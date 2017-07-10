@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/notification"
+                android:background="@android:color/black"
+                android:padding="5dp">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/ic_play_arrow_white_48dp"
+        android:cropToPadding="true"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/name"
+        android:layout_marginTop="5dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_toLeftOf="@+id/duration"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:text="Experience"/>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/artist"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_toRightOf="@+id/icon"
+        android:layout_below="@+id/name"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:layout_toLeftOf="@+id/duration"
+        android:text="Ludovico Einaudi"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/duration"
+        android:layout_marginLeft="@dimen/dimen_default"
+        android:layout_alignParentRight="true"
+        android:layout_alignBaseline="@+id/name"
+        android:layout_marginRight="5dp"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:text="5:23"/>
+
+
+</RelativeLayout>

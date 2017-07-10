@@ -1,6 +1,9 @@
 package com.kara4k.moozic;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +18,7 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
 
     private ActivityCallback mActivityCallback;
     private Player mPlayer;
+    private ActionsReceiver mActionsReceiver;
 
     interface ActivityCallback {
         void onBackPressed();
@@ -29,6 +33,9 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
         mPlayer = new Player(this);
         startService(MusicService.newIntent(this));
         startService(DestroyService.newIntent(this));
+        mActionsReceiver = new ActionsReceiver();
+        registerReceiver(mActionsReceiver,
+                new IntentFilter(NotificationManager.NOTIFICATION_ACTIONS));
     }
 
     @Override
@@ -123,6 +130,7 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
         Log.e("MoozicActivity", "onDestroy: " + "here");
         stopService(MusicService.newIntent(this));
         stopService(DestroyService.newIntent(this));
+        unregisterReceiver(mActionsReceiver);
         super.onDestroy();
     }
 
@@ -160,5 +168,35 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
 
     public void setPlayerListCallback(Player.PlayerListCallback playerListCallback) {
         mPlayer.setPlayerListCallback(playerListCallback);
+    }
+
+    public class ActionsReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int action = intent.getIntExtra(NotificationManager.ACTION, -1);
+            switch (action) {
+                case NotificationManager.ACTION_PLAY:
+                    mPlayer.togglePlayPause();
+                    Log.e("ActionsReceiver", "onReceive: " + "play");
+                    break;
+                case NotificationManager.ACTION_PREV:
+
+                    Log.e("ActionsReceiver", "onReceive: " + "prev");
+                    mPlayer.playPrev();
+                    break;
+                case NotificationManager.ACTION_NEXT:
+                    Log.e("ActionsReceiver", "onReceive: " + "next");
+                    mPlayer.playNext();
+                    break;
+
+            }
+
+        }
+    }
+
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MoozicActivity.class);
     }
 }
