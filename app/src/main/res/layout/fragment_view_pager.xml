@@ -6,7 +6,7 @@
     >
 
 
-    <com.kara4k.moozic.LockableViewPager
+    <com.kara4k.rulerplayer.LockableViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/view_pager"
         android:layout_width="match_parent"

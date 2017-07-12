@@ -89,7 +89,7 @@
         android:textColor="@android:color/white"/>
 
 
-    <com.kara4k.moozic.RulerView
+    <com.kara4k.rulerplayer.RulerView
         android:id="@+id/ruler_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -99,7 +99,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         />
-    <com.kara4k.moozic.RulerCycleView
+    <com.kara4k.rulerplayer.RulerCycleView
         android:id="@+id/ruler_cycle_view"
         android:layout_above="@+id/seek_bar"
         android:visibility="gone"

@@ -29,7 +29,7 @@
         android:layout_toLeftOf="@+id/duration"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:text="Experience"/>
+        />
 
 
 
@@ -45,7 +45,7 @@
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:layout_toLeftOf="@+id/duration"
-        android:text="Ludovico Einaudi"/>
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:text="5:23"/>
+        />
 
 
 </RelativeLayout>

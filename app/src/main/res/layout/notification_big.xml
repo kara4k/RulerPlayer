@@ -14,7 +14,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="7dp"
         android:cropToPadding="true"
-        android:src="@drawable/ic_play_arrow_white_48dp"
+        android:src="@drawable/ic_radio_white_24dp"
         />
 
     <TextView
@@ -26,7 +26,6 @@
         android:layout_toLeftOf="@+id/duration"
         android:layout_toRightOf="@+id/icon"
         android:ellipsize="end"
-        android:text="Experience"
         android:textColor="@android:color/white"
         android:textStyle="bold"/>
 
@@ -41,7 +40,6 @@
         android:layout_toRightOf="@+id/icon"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Ludovico Einaudi"
         android:textColor="@android:color/white"
         android:textStyle="bold"/>
 
@@ -53,13 +51,13 @@
         android:layout_alignParentRight="true"
         android:layout_marginLeft="@dimen/dimen_default"
         android:layout_marginRight="5dp"
-        android:text="5:23"
         android:textSize="12sp"
         android:textColor="@android:color/white"
         android:textStyle="bold"/>
 
     <LinearLayout
         android:id="@+id/actions"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/icon"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.kara4k.moozic">
+          package="com.kara4k.rulerplayer">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MoozicActivity"
+            android:name="com.kara4k.rulerplayer.MoozicActivity"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
@@ -49,10 +49,11 @@
             </intent-filter>
 
         </activity>
+        <activity android:name="com.kara4k.rulerplayer.SettingsActivity"/>
         <service
-            android:name=".MusicService"
+            android:name="com.kara4k.rulerplayer.MusicService"
             android:process=":Doze"/>
-        <service android:name=".DestroyService"
+        <service android:name="com.kara4k.rulerplayer.DestroyService"
                  android:stopWithTask="false"/>
     </application>
 
