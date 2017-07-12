@@ -87,7 +87,7 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
         return indexes;
     }
 
-    protected void selectionChanged(){
+    void selectionChanged(){
 
     }
 

@@ -11,16 +11,16 @@ import android.util.Log;
 import java.io.File;
 import java.util.List;
 
-public class TrackInfoParser extends HandlerThread {
+class TrackInfoParser extends HandlerThread {
 
-    public static final int GET_TRACK_INFO = 1;
+    private static final int GET_TRACK_INFO = 1;
 
     public static final String FILE_CORRUPTED = "-----";
 
     private Handler mHandler;
     private final MediaMetadataRetriever mDataRetriever;
 
-    private Handler mFragmentHandler;
+    private final Handler mFragmentHandler;
     private InfoParserCallback mInfoParserCallback;
 
 
@@ -61,7 +61,6 @@ public class TrackInfoParser extends HandlerThread {
     private void handle(final TrackItem trackItem) {
 
         if (trackItem == null) {
-            Log.e("TrackInfoParser", "handle: " + "here");
             return;
         }
 

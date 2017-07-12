@@ -24,8 +24,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public static final String WIFI_ONLY = "wifi_only";
 
     public static final String UNDEFINED = "-1";
-    public static final int REQUEST_HOME_DIR = 1;
-    public static final int REQUEST_DOWNLOAD_DIR = 2;
+    private static final int REQUEST_HOME_DIR = 1;
+    private static final int REQUEST_DOWNLOAD_DIR = 2;
     private Preference mHomeFolderPref;
     private Preference mDownloadFolderPref;
 
@@ -90,7 +90,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         return false;
     }
 
-    protected void checkSdPermission(int request) {
+    private void checkSdPermission(int request) {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             Toast toast = Toast.makeText(getActivity(),
                     R.string.toast_sd_card_not_found, Toast.LENGTH_SHORT);
@@ -120,7 +120,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
 
-    protected boolean isHasSDPermissions() {
+    private boolean isHasSDPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             int hasReadSDPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (hasReadSDPermission == PackageManager.PERMISSION_DENIED) {

@@ -14,8 +14,8 @@ import java.util.List;
 
 public class RadioFragment extends MusicFragment {
 
-    public static final int ADD_RADIO = 1;
-    public static final int UPDATE_RADIO = 2;
+    private static final int ADD_RADIO = 1;
+    private static final int UPDATE_RADIO = 2;
 
     private List<TrackItem> mSearchableItems;
 
@@ -155,7 +155,7 @@ public class RadioFragment extends MusicFragment {
     }
 
     @Override
-    void onActionMenuClicked(ActionMode mode, MenuItem item) {
+    void onActionMenuClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_select_all:
                 mTracksAdapter.selectAll();

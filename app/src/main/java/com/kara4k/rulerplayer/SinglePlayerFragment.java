@@ -23,7 +23,6 @@ import static com.kara4k.rulerplayer.TrackInfoParser.getDuration;
 public class SinglePlayerFragment extends Fragment implements Handler.Callback,
         Player.PlayerSingleCallback, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    private Handler mHandler;
     private SeekBar mSeekBar;
     private Player mPlayer;
     private RulerView mRulerView;
@@ -46,17 +45,12 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mHandler = new Handler(this);
+        Handler handler = new Handler(this);
         MoozicActivity activity = (MoozicActivity) getActivity();
         mPlayer = activity.getPlayer();
-        mPlayer.setSingleFragHandler(mHandler);
+        mPlayer.setSingleFragHandler(handler);
         mPlayer.setPlayerSingleCallback(this);
     }
 

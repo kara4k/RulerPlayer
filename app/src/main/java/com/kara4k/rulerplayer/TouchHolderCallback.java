@@ -3,7 +3,7 @@ package com.kara4k.rulerplayer;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-public class TouchHolderCallback<ADAPTER extends SelectableAdapter> extends ItemTouchHelper.Callback {
+class TouchHolderCallback<ADAPTER extends SelectableAdapter> extends ItemTouchHelper.Callback {
 
     private final ADAPTER mAdapter;
 

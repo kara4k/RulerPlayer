@@ -12,19 +12,16 @@ import java.util.ArrayList;
 public class RulerCycleView extends RulerView {
 
 
-    private float mViewWidth;
-    private float mViewHeight;
-
     private float mStartY;
     private float mEndY;
     private float mStartX = -1f;
     private float mEndX = -1f;
 
     private boolean mIsCycleMode;
-    int mStartValue = -1;
-    int mEndValue = -1;
+    private int mStartValue = -1;
+    private int mEndValue = -1;
 
-    float[] mLinesPoints;
+    private float[] mLinesPoints;
     private boolean mIsDrawText;
     private float mTextX;
     private float mTextY;
@@ -58,10 +55,10 @@ public class RulerCycleView extends RulerView {
     }
 
     private void initDrawBorders(Canvas canvas) {
-        mViewWidth = canvas.getWidth();
-        mViewHeight = canvas.getHeight();
-        mEndY = mViewHeight - calcDp(10);
-        mStartY = mViewHeight - calcDp(25);
+        float viewWidth = canvas.getWidth();
+        float viewHeight = canvas.getHeight();
+        mEndY = viewHeight - calcDp(10);
+        mStartY = viewHeight - calcDp(25);
     }
 
 

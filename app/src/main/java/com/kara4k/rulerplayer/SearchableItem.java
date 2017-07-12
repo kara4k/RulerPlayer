@@ -1,7 +1,7 @@
 package com.kara4k.rulerplayer;
 
 
-public abstract class SearchableItem {
+abstract class SearchableItem {
 
     protected abstract String getFirstField();
 

@@ -22,8 +22,8 @@ import java.util.List;
 public class CardFragment extends MusicFragment
         implements SearchView.OnQueryTextListener, Player.PlayerListCallback {
 
-    public static final int SHOW_TRACKS = 1;
-    public static final int DELETE_FILES = 2;
+    private static final int SHOW_TRACKS = 1;
+    private static final int DELETE_FILES = 2;
 
     private File mCurrentDir;
     private CardTracksHolder mCardTracksHolder;
@@ -212,7 +212,7 @@ public class CardFragment extends MusicFragment
     }
 
     @Override
-    void onActionMenuClicked(ActionMode mode, MenuItem item) {
+    void onActionMenuClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_select_all:
                 mTracksAdapter.selectAll();

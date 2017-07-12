@@ -44,11 +44,6 @@ public class PlaylistHolder {
     }
 
 
-
-    public void getRadioItems() {
-
-    }
-
     public void updateItemsPositions(List<TrackItem> items){
         for (int i = 0; i < items.size(); i++) {
             updateItemPosition(items.get(i), i);
@@ -56,7 +51,7 @@ public class PlaylistHolder {
     }
 
 
-    public void updateItemPosition(TrackItem trackItem, int position) {
+    private void updateItemPosition(TrackItem trackItem, int position) {
         String filePath = trackItem.getFilePath();
         ContentValues values = new ContentValues();
         values.put(Playlist.Cols.POSITION, position);
@@ -65,7 +60,7 @@ public class PlaylistHolder {
 
 
 
-    public boolean isExist(TrackItem trackItem) {
+    private boolean isExist(TrackItem trackItem) {
         String clause = Playlist.Cols.FILE_PATH + " = ?";
         String[] args = new String[]{trackItem.getFilePath()};
         Cursor cursor = mDatabase.query(Playlist.NAME, null, clause, args, null, null, null);
@@ -79,7 +74,7 @@ public class PlaylistHolder {
     }
 
 
-    public void deleteItem(TrackItem trackItem) {
+    private void deleteItem(TrackItem trackItem) {
         String filePath = String.valueOf(trackItem.getFilePath());
         mDatabase.delete(Playlist.NAME, Playlist.Cols.FILE_PATH + " = ?",
                 new String[]{filePath});

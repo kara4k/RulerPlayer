@@ -20,7 +20,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     public static final int BUFFERING = 2;
 
 
-    private Context mContext;
+    private final Context mContext;
     private final AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer;
     private boolean playOnInterrupt;
@@ -28,8 +28,8 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     private PlayerSingleCallback mPlayerSingleCallback;
     private PlayerListCallback mPlayerListCallback;
     private boolean shouldStop = false;
-    private Player mPlayer;
-    private NotificationManager mNotificationManager;
+    private final Player mPlayer;
+    private final NotificationManager mNotificationManager;
 
     interface PlayerSingleCallback {
         void onPlayTrack(TrackItem trackItem);
@@ -126,7 +126,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         }
     }
 
-    public void repeatCurrent() {
+    private void repeatCurrent() {
         if (mPlayerListCallback != null) {
             mPlayerListCallback.repeatCurrent();
         }
@@ -139,7 +139,6 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void play(TrackItem trackItem) {
-        Log.e("Player", "play: " + "here");
         if (mMediaPlayer == null) {
             playTrack(trackItem);
 
@@ -316,7 +315,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
                 , mNotificationManager.getNotification(mMediaPlayer, trackItem));
     }
 
-    BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {

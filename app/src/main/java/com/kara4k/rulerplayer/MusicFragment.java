@@ -44,27 +44,27 @@ public abstract class MusicFragment extends Fragment implements
 
 
     public static final int SORT_BY_NAME = 1;
-    public static final int SORT_BY_ARTIST = 2;
-    public static final int SORT_BY_DATE = 3;
-    public static final int SORT_BY_TYPE = 4;
+    private static final int SORT_BY_ARTIST = 2;
+    private static final int SORT_BY_DATE = 3;
+    private static final int SORT_BY_TYPE = 4;
 
-    protected ActionMode mActionMode;
-    protected ActionMode.Callback mModeCallback;
+    ActionMode mActionMode;
+    private ActionMode.Callback mModeCallback;
     private ActionModeListener mModeListener;
 
-    protected CardFragment.CardCallbacks mCardCallbacks;
+    CardFragment.CardCallbacks mCardCallbacks;
 
-    protected View mView;
-    protected RecyclerView mRecyclerView;
-    protected LinearLayoutManager mLayoutManager;
-    protected TracksAdapter mTracksAdapter;
-    protected ActionMenuView mBottomBar;
-    protected SearchView mSearchView;
+    private View mView;
+    RecyclerView mRecyclerView;
+    LinearLayoutManager mLayoutManager;
+    TracksAdapter mTracksAdapter;
+    private ActionMenuView mBottomBar;
+    SearchView mSearchView;
 
-    protected TrackItem mCurrentTrack;
+    TrackItem mCurrentTrack;
 
     private boolean mIsViewLoaded = false;
-    protected boolean mIsSwapMode = false;
+    boolean mIsSwapMode = false;
 
     public interface ActionModeListener {
         void onActionModeStart();
@@ -106,7 +106,7 @@ public abstract class MusicFragment extends Fragment implements
 
     abstract void onActionModeCreate(ActionMode mode, Menu menu);
 
-    abstract void onActionMenuClicked(ActionMode mode, MenuItem item);
+    abstract void onActionMenuClicked(MenuItem item);
 
 
     @Override
@@ -286,11 +286,11 @@ public abstract class MusicFragment extends Fragment implements
         }
     }
 
-    protected void onSwapModeFinished() {
+    void onSwapModeFinished() {
 
     }
 
-    protected void scrollToCurrentTrack() {
+    void scrollToCurrentTrack() {
         int currentIndex = mTracksAdapter.getCurrentIndex();
         if (currentIndex == -1) return;
         mLayoutManager.scrollToPosition(currentIndex);
@@ -334,7 +334,7 @@ public abstract class MusicFragment extends Fragment implements
         }
     }
 
-    protected void checkSdPermission(int request) {
+    void checkSdPermission(int request) {
         if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             return;
         }
@@ -361,7 +361,7 @@ public abstract class MusicFragment extends Fragment implements
     }
 
 
-    protected boolean isHasSDPermissions() {
+    private boolean isHasSDPermissions() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             int hasReadSDPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (hasReadSDPermission == PackageManager.PERMISSION_DENIED) {
@@ -371,12 +371,12 @@ public abstract class MusicFragment extends Fragment implements
         return true;
     }
 
-    protected void setCurrentTrack(TrackItem trackItem) {
+    private void setCurrentTrack(TrackItem trackItem) {
         mCurrentTrack = trackItem;
         Preferences.setCurrentTrack(getContext(), trackItem);
     }
 
-    public void playTrack(TrackItem trackItem, int newIndex) {
+    void playTrack(TrackItem trackItem, int newIndex) {
         if (mCardCallbacks != null) {
             int prevIndex = mTracksAdapter.getCurrentIndex();
             setCurrentTrack(trackItem);
@@ -468,7 +468,7 @@ public abstract class MusicFragment extends Fragment implements
 
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                onActionMenuClicked(mode, item);
+                onActionMenuClicked(item);
                 return false;
             }
 
@@ -481,13 +481,13 @@ public abstract class MusicFragment extends Fragment implements
         };
     }
 
-    protected void finishActionMode() {
+    void finishActionMode() {
         if (mActionMode != null) {
             mActionMode.finish();
         }
     }
 
-    protected void onSelectionChanged() {
+    void onSelectionChanged() {
 
     }
 
@@ -666,11 +666,11 @@ public abstract class MusicFragment extends Fragment implements
     class TrackHolder extends SelectableHolder<TrackItem> {
 
         private TrackItem mTrackItem;
-        private TextView mNameTextView;
-        private TextView mArtistTextView;
-        private TextView mDurationTextView;
-        private TextView mExtensionTextView;
-        private ImageView mFolderIconImageView;
+        private final TextView mNameTextView;
+        private final TextView mArtistTextView;
+        private final TextView mDurationTextView;
+        private final TextView mExtensionTextView;
+        private final ImageView mFolderIconImageView;
 
         @Override
         ActionMode getActionMode() {

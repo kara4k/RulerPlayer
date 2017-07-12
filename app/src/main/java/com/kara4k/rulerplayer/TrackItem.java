@@ -8,20 +8,20 @@ import java.io.Serializable;
 
 public class TrackItem extends SearchableItem implements Comparable<TrackItem>, Serializable {
 
-    String mName;
-    File mFile;
-    String mFilePath;
-    boolean mIsTrack;
+    private String mName;
+    private File mFile;
+    private String mFilePath;
+    private boolean mIsTrack;
     String mTrackName;
-    String mTrackArtist;
-    int mDurationMs;
-    String mDuration;
-    String mExtension;
-    long mDate;
-    String mBitrate;
-    boolean mHasInfo;
-    boolean mIsOnline;
-    boolean mIsRadio;
+    private String mTrackArtist;
+    private int mDurationMs;
+    private String mDuration;
+    private String mExtension;
+    private long mDate;
+    private String mBitrate;
+    private boolean mHasInfo;
+    private boolean mIsOnline;
+    private boolean mIsRadio;
 
     public String getName() {
         return mName;

@@ -44,7 +44,7 @@ public class RadioListHolder {
         }
     }
 
-    public void deleteItem(TrackItem trackItem) {
+    private void deleteItem(TrackItem trackItem) {
         String filePath = String.valueOf(trackItem.getFilePath());
         mDatabase.delete(RadioList.NAME, DbSchemes.Playlist.Cols.FILE_PATH + " = ?",
                 new String[]{filePath});
@@ -70,7 +70,7 @@ public class RadioListHolder {
     }
 
 
-    public void updateItemPosition(TrackItem trackItem, int position) {
+    private void updateItemPosition(TrackItem trackItem, int position) {
         String filePath = trackItem.getFilePath();
         ContentValues values = new ContentValues();
         values.put(DbSchemes.Playlist.Cols.POSITION, position);
@@ -89,7 +89,7 @@ public class RadioListHolder {
         return tracks;
     }
 
-    public int getLastPosition() {
+    private int getLastPosition() {
         Cursor cursor = mDatabase.query(RadioList.NAME
                 , new String[]{DbSchemes.Playlist.Cols.POSITION}
                 , null, null, null, null, DbSchemes.Playlist.Cols.POSITION + " DESC");

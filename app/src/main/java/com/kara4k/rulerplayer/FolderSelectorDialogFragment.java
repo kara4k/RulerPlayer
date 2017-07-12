@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 public class FolderSelectorDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
 
-    public static final String PARENT = "parent";
+    private static final String PARENT = "parent";
     public static final String PATH = "path";
 
     private RecyclerView mRecyclerView;
@@ -78,7 +78,7 @@ public class FolderSelectorDialogFragment extends DialogFragment implements Dial
 
     class Adapter extends RecyclerView.Adapter<FolderHolder> {
 
-        ArrayList<File> mFiles;
+        final ArrayList<File> mFiles;
 
         public Adapter(ArrayList<File> files) {
             mFiles = files;
@@ -106,7 +106,7 @@ public class FolderSelectorDialogFragment extends DialogFragment implements Dial
 
         private File mFile;
         private final TextView mNameTextView;
-        private ImageView mFolderIconImageView;
+        private final ImageView mFolderIconImageView;
 
         public FolderHolder(View itemView) {
             super(itemView);

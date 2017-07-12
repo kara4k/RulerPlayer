@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CardTracksHolder {
+class CardTracksHolder {
 
-    private Context mContext;
+    private final Context mContext;
 
     public CardTracksHolder(Context context) {
         mContext = context;
@@ -82,17 +82,11 @@ public class CardTracksHolder {
         File[] folders = parent.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                if (pathname.isDirectory() && !pathname.isHidden()) {
-                    return true;
-                }
-                return false;
+                return pathname.isDirectory() && !pathname.isHidden();
             }
         });
 
-
-        for (int i = 0; i < folders.length; i++) {
-            list.add(folders[i]);
-        }
+        Collections.addAll(list, folders);
 
         Collections.sort(list, new Comparator<File>() {
             @Override

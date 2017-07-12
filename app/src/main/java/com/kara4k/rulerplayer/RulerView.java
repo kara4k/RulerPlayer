@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.SeekBar;
@@ -20,43 +19,43 @@ import java.util.ArrayList;
 
 public class RulerView extends View {
 
-    public static final int SEC = 1;
-    public static final int TEN_SEC = SEC * 10;
-    public static final int MIN = SEC * 60;
-    public static final int TEN_MIN = MIN * 10;
-    public static final int HOUR = MIN * 60;
+    private static final int SEC = 1;
+    private static final int TEN_SEC = SEC * 10;
+    private static final int MIN = SEC * 60;
+    private static final int TEN_MIN = MIN * 10;
+    private static final int HOUR = MIN * 60;
 
-    public static final String ZERO = "0";
-    public static final String TEXT_TEN_SEC = "10s";
-    public static final String TEXT_MIN = "1m";
-    public static final String TEXT_TEN_MIN = "10m";
-    public static final String TEXT_HOUR = "1h";
+    private static final String ZERO = "0";
+    private static final String TEXT_TEN_SEC = "10s";
+    private static final String TEXT_MIN = "1m";
+    private static final String TEXT_TEN_MIN = "10m";
+    private static final String TEXT_HOUR = "1h";
 
 
     private static final float RULER_START_Y = 10;
     private static final float RULER_END_Y = 32.5f;
 
-    public static final float PAINT_STROKE_BIG = 1.5f;
-    public static final float PAINT_STROKE_MIDDLE = 1;
-    public static final float PAINT_STROKE_SMALL = 1;
+    private static final float PAINT_STROKE_BIG = 1.5f;
+    private static final float PAINT_STROKE_MIDDLE = 1;
+    private static final float PAINT_STROKE_SMALL = 1;
 
     private int mSeekBarId;
-    protected SeekBar mSeekBar;
+    SeekBar mSeekBar;
 
-    protected Paint mPaint;
-    protected Paint mTextPaint;
+    Paint mPaint;
+    Paint mTextPaint;
 
-    protected float mPaintStrokeBig;
-    protected float mPaintStrokeMid;
-    protected float mPaintStrokeSmall;
+    float mPaintStrokeBig;
+    private float mPaintStrokeMid;
+    private float mPaintStrokeSmall;
 
     private float[] mMainRulerPoints;
     private float[] mBigLinesPoints;
     private float[] mMiddleLinesPoints;
     private float[] mSmallLinesPoints;
-    protected float mRulerWidth;
-    protected float mRulerStartX;
-    protected float mRulerEndX;
+    private float mRulerWidth;
+    float mRulerStartX;
+    private float mRulerEndX;
     private float mRulerStartY;
     private float mRulerEndY;
     private float mRulerSmallLineEndY;
@@ -75,7 +74,7 @@ public class RulerView extends View {
     private float mBufStartX = -1;
     private float mBufEndX = -1;
 
-    public RulerView(Context context, SeekBar seekBar) {
+    RulerView(Context context, SeekBar seekBar) {
         super(context);
         mSeekBar = seekBar;
         setup();
@@ -104,7 +103,7 @@ public class RulerView extends View {
         mSeekBar = seekBar;
     }
 
-    protected void setup() {
+    void setup() {
         mPaintStrokeBig = calcDp(PAINT_STROKE_BIG);
         mPaintStrokeMid = calcDp(PAINT_STROKE_MIDDLE);
         mPaintStrokeSmall = calcDp(PAINT_STROKE_SMALL);
@@ -118,7 +117,7 @@ public class RulerView extends View {
 
     }
 
-    public float calcDp(float sizeInPixels) {
+    float calcDp(float sizeInPixels) {
         DisplayMetrics dm = getResources().getDisplayMetrics();
         float inPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeInPixels, dm);
         return inPixels;
@@ -171,7 +170,7 @@ public class RulerView extends View {
 
     }
 
-    public void setupBigLines(int secPerStep) {
+    private void setupBigLines(int secPerStep) {
 
         ArrayList<Float> bigRulerPointsList = calcFloats(secPerStep, mRulerEndY);
 
@@ -197,7 +196,7 @@ public class RulerView extends View {
         mTextY = bigRulerPointsList.get(3) + textHeight + 5;
     }
 
-    public void setupMiddleLines(int secPerStep) {
+    private void setupMiddleLines(int secPerStep) {
         ArrayList<Float> midRulerPointsList = calcFloats(secPerStep, mRulerMiddleLineEndY);
 
         mMiddleLinesPoints = new float[midRulerPointsList.size()];
@@ -208,7 +207,7 @@ public class RulerView extends View {
         }
     }
 
-    public void setupSmallLines(int secPerStep) {
+    private void setupSmallLines(int secPerStep) {
         ArrayList<Float> smallRulerPointsList = calcFloats(secPerStep, mRulerSmallLineEndY);
 
         mSmallLinesPoints = new float[smallRulerPointsList.size()];
@@ -237,7 +236,7 @@ public class RulerView extends View {
         return smallRulerPointsList;
     }
 
-    protected void initRulerParams() {
+    void initRulerParams() {
         mRulerStartY = calcDp(RULER_START_Y);
         mRulerEndY = calcDp(RULER_END_Y);
         float rulerHeight = mRulerEndY - mRulerStartY;
@@ -288,7 +287,7 @@ public class RulerView extends View {
         super.onDraw(canvas);
     }
 
-    protected void drawRuler(Canvas canvas) {
+    void drawRuler(Canvas canvas) {
         setupRulerPoints();
         mPaint.setStrokeWidth(mPaintStrokeBig);
         canvas.drawLines(mMainRulerPoints, mPaint);
@@ -319,9 +318,6 @@ public class RulerView extends View {
         } else {
             mBufEndX = bufEndX;
         }
-        Log.e("RulerView", "setBuffering: " + mBufStartX);
-        Log.e("RulerView", "setBuffering: " + mBufEndX);
-        Log.e("RulerView", "setBuffering: " + mIsBuffering);
         invalidate();
     }
 
@@ -336,7 +332,7 @@ public class RulerView extends View {
         invalidate();
     }
 
-    protected float getProgressPosition() {
+    float getProgressPosition() {
         return mRulerStartX + mRulerWidth / mSeekBar.getMax() * mSeekBar.getProgress();
     }
 

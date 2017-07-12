@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -22,7 +21,7 @@ import static android.content.Context.DOWNLOAD_SERVICE;
 
 public class SearchFragment extends MusicFragment {
 
-    public static final int DOWNLOAD_TRACK = 1;
+    private static final int DOWNLOAD_TRACK = 1;
 
 
     private String mQuery;
@@ -36,11 +35,6 @@ public class SearchFragment extends MusicFragment {
         SearchFragment fragment = new SearchFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
 
@@ -180,7 +174,7 @@ public class SearchFragment extends MusicFragment {
     }
 
     @Override
-    void onActionMenuClicked(ActionMode mode, MenuItem item) {
+    void onActionMenuClicked(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_select_all:
                 mTracksAdapter.selectAll();

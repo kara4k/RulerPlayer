@@ -10,10 +10,10 @@ import android.support.v7.app.NotificationCompat;
 import android.view.View;
 import android.widget.RemoteViews;
 
-public class NotificationManager {
+class NotificationManager {
 
     public static final int NOTIFICATION_ID = 1;
-    public static final int REQUEST_MAIN_ACTIVITY = 5;
+    private static final int REQUEST_MAIN_ACTIVITY = 5;
 
     public static final String NOTIFICATION_ACTIONS = "com.kara4k.rulerplayer.notification";
     public static final String ACTION = "action";
@@ -22,7 +22,7 @@ public class NotificationManager {
     public static final int ACTION_PLAY = 1;
     public static final int ACTION_NEXT = 2;
 
-    private Context mContext;
+    private final Context mContext;
 
     public NotificationManager(Context context) {
         mContext = context;
@@ -31,7 +31,7 @@ public class NotificationManager {
 
     public Notification getNotification(MediaPlayer mediaPlayer, TrackItem trackItem) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
-        builder.setCustomContentView(getRemoteView(mediaPlayer, trackItem));
+        builder.setCustomContentView(getRemoteView(trackItem));
         builder.setCustomBigContentView(getBigRemoteView(mediaPlayer, trackItem));
         builder.setOngoing(true);
 
@@ -48,7 +48,7 @@ public class NotificationManager {
     }
 
 
-    private RemoteViews getRemoteView(MediaPlayer mediaPlayer, TrackItem trackItem) {
+    private RemoteViews getRemoteView(TrackItem trackItem) {
         RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.notification);
         fillTrackInfoViews(trackItem, remoteViews);
 

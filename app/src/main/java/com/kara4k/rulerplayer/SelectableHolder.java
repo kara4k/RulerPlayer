@@ -68,7 +68,7 @@ abstract class SelectableHolder<ITEM extends SearchableItem> extends RecyclerVie
         return mITEM;
     }
 
-    protected void setITEM(ITEM ITEM) {
+    void setITEM(ITEM ITEM) {
         mITEM = ITEM;
     }
 }

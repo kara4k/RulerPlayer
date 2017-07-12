@@ -11,13 +11,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Preferences {
+class Preferences {
 
-    public static final String CURRENT_TRACK = "current_track";
-    public static final String REPEAT_ONE = "repeat_one";
-    public static final String SORT_ORDER = "sort_order";
-    public static final String PLAYLIST = "playlist";
-    public static final String SHOW_WARNING_DIALOG = "warning_dialog";
+    private static final String CURRENT_TRACK = "current_track";
+    private static final String REPEAT_ONE = "repeat_one";
+    private static final String SORT_ORDER = "sort_order";
+    private static final String PLAYLIST = "playlist";
+    private static final String SHOW_WARNING_DIALOG = "warning_dialog";
 
 
 

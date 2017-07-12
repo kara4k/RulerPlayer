@@ -3,7 +3,6 @@ package com.kara4k.rulerplayer.database;
 
 import android.database.Cursor;
 import android.database.CursorWrapper;
-import android.util.Log;
 
 import com.kara4k.rulerplayer.TrackItem;
 
@@ -32,12 +31,6 @@ public class TrackItemCursorWrapper extends CursorWrapper {
         int isOnline = getInt(getColumnIndex(Playlist.Cols.IS_ONLINE));
 
         int position = getInt(getColumnIndex(Playlist.Cols.POSITION));
-        Log.e("TrackItemCursorWrapper", "getTrackItem: " + trackName);
-        Log.e("TrackItemCursorWrapper", "getTrackItem: " + position);
-
-
-
-//        if (!file.exists()) return null;
 
         TrackItem item = new TrackItem();
         item.setTrack(true);

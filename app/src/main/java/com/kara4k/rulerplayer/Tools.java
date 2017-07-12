@@ -6,7 +6,7 @@ import android.media.MediaMetadataRetriever;
 import java.io.File;
 
 
-public class Tools {
+class Tools {
 
     public static void setTrackInfo(final TrackItem trackItem) {
         MediaMetadataRetriever dataRetriever = new MediaMetadataRetriever();

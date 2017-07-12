@@ -4,7 +4,7 @@
                 android:layout_height="match_parent"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:animateLayoutChanges="true"
-                android:background="@drawable/bg2"
+                android:background="@drawable/background"
                 android:orientation="vertical">
 
     <LinearLayout
@@ -19,26 +19,23 @@
             android:id="@+id/speaker_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_speaker_white_24dp"
             android:drawablePadding="7dp"
             android:padding="@dimen/dimen_default"
             android:textColor="@android:color/white"
-            android:textSize="10dp"/>
+            android:textSize="10sp"/>
         <TextView
             android:id="@+id/headset_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:drawableLeft="@drawable/ic_headset_white_24dp"
             android:drawablePadding="7dp"
             android:gravity="center"
             android:padding="@dimen/dimen_default"
             android:textColor="@android:color/white"
-            android:textSize="10dp"/>
+            android:textSize="10sp"/>
 
         <TextView
             android:id="@+id/volume_text_view"
@@ -49,7 +46,7 @@
             android:gravity="center"
             android:padding="@dimen/dimen_default"
             android:textColor="@android:color/white"
-            android:textSize="10dp"/>
+            android:textSize="10sp"/>
     </LinearLayout>
 
 
@@ -67,7 +64,6 @@
         android:gravity="center"
         android:textSize="18sp"
         android:lines="3"
-        android:text="Never wish you die"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         />
@@ -84,7 +80,6 @@
         android:ellipsize="end"
         android:gravity="right"
         android:paddingRight="@dimen/dimen_default"
-        android:text="Mr.Oizo"
         android:textStyle="italic"
         android:textColor="@android:color/white"/>
 
@@ -167,7 +162,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="@dimen/dimen_default"
-            android:text="4:40"
+            android:text="0:00"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             />
@@ -232,7 +227,7 @@
             android:id="@+id/start_cycle_button"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
-            android:text="Start"
+            android:text="@string/cycle_btn_start"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="12sp"/>
@@ -244,7 +239,7 @@
             android:id="@+id/finish_cycle_button"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
-            android:text="Finish"
+            android:text="@string/cycle_btn_finish"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="12sp"/>
