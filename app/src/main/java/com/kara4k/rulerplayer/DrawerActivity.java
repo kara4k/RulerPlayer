@@ -38,6 +38,7 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
     private void setupActionBar() {
         try {
             getSupportActionBar().setShowHideAnimationEnabled(true);
+            getSupportActionBar().setTitle("");
         } catch (Exception e) {
             e.printStackTrace();
         }

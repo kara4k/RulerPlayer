@@ -66,6 +66,7 @@ public class SearchFragment extends MusicFragment {
             }
         });
 
+
     }
 
     @Override

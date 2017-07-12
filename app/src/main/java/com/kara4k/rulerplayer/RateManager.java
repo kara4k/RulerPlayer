@@ -16,7 +16,7 @@ class RateManager implements DialogInterface.OnClickListener {
     private static final String RATE_PREFS = "rate_preferences";
     private static final String LAUNCH_COUNT_KEY = "launch_count";
     private static final String SHOW_DIALOG_KEY = "is_show_dialog";
-    private static final int LAUNCHES_TO_SHOW = 10;
+    private static final int LAUNCHES_TO_SHOW = 7;
 
 
     private final Context mContext;

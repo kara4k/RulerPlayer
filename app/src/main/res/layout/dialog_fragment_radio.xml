@@ -12,7 +12,7 @@
         android:layout_marginTop="@dimen/dimen_default"
         android:layout_marginRight="@dimen/dimen_default"
         android:layout_width="match_parent"
-        android:text="Name:"
+        android:text="@string/radio_dialog_name_text_view"
         android:textColor="@android:color/white"
         android:layout_height="wrap_content"/>
     <EditText
@@ -28,7 +28,7 @@
         android:layout_marginRight="@dimen/dimen_default"
         android:textColor="@android:color/white"
         android:layout_width="match_parent"
-        android:text="Description:"
+        android:text="@string/radio_dialog_description_text_view"
         android:layout_height="wrap_content"/>
     <EditText
         android:id="@+id/radio_desc_edit_text"
@@ -42,7 +42,7 @@
         android:layout_marginTop="@dimen/dimen_default"
         android:layout_marginRight="@dimen/dimen_default"
         android:layout_width="match_parent"
-        android:text="Radio url:"
+        android:text="@string/radio_dialog_url_text_view"
         android:textColor="@android:color/white"
         android:layout_height="wrap_content"/>
     <EditText

@@ -4,7 +4,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:id="@+id/notification"
-                android:background="@android:color/black"
+                android:background="@color/dialogBackground"
                 android:padding="5dp">
 
     <ImageView
@@ -43,7 +43,6 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
         android:layout_toLeftOf="@+id/duration"
         />
 
@@ -57,7 +56,6 @@
         android:layout_marginRight="5dp"
         android:textColor="@android:color/white"
         android:textSize="12sp"
-        android:textStyle="bold"
         />
 
 

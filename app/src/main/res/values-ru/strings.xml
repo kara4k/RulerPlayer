@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_add_radio_title">Радио:</string>
+    <string name="dialog_delete_files_message">Выбранные файлы будут удалены с SD-карты. Эта операция не может быть отменена.</string>
+    <string name="dialog_delete_files_title">Удалить выбранные файлы</string>
+    <string name="dialog_sort_by_title">Сортировать по:</string>
+    <string name="last_btn_add_radio_title">Добавить радио</string>
+    <string name="last_btn_playlist">Плэйлист</string>
+    <string name="last_btn_title_search_fragment">Популярная</string>
+    <string name="menu_action_add_to_playlist">Добавить в плейлист</string>
+    <string name="menu_action_delete_track">Удалить</string>
+    <string name="menu_action_download">Скачать</string>
+    <string name="menu_action_edit_radio">Редактировать радио</string>
+    <string name="menu_action_remove_from_playlist">Убрать из плейлиста</string>
+    <string name="menu_action_select_all">Выбрать все</string>
+    <string name="menu_item_close_app">Закрыть</string>
+    <string name="menu_item_delete_radio">Удалить радио</string>
+    <string name="menu_item_pause">Пауза</string>
+    <string name="menu_item_play">Играть</string>
+    <string name="menu_item_repeat_mode">Повтор</string>
+    <string name="menu_item_search">Поиск</string>
+    <string name="menu_item_sort">Сортировка</string>
+    <string name="menu_item_stop">Стоп</string>
+    <string name="menu_item_swap_mode">Изменить позиции</string>
+    <string name="navigation_item_files">Файлы</string>
+    <string name="navigation_item_radio">Радио</string>
+    <string name="navigation_item_search">Поиск</string>
+    <string name="navigation_item_settings">Настройки</string>
+    <string name="navigation_menu_rate">Оценить</string>
+    <string name="navigation_menu_share">Поделиться</string>
+    <string name="pref_category_downloads_title">Загрузка</string>
+    <string name="pref_download_folder_title">Папка для скачивания</string>
+    <string name="pref_folder_undefined">По умолчанию</string>
+    <string name="pref_wifi_only_summary">Скачивать только по Wi-Fi</string>
+    <string name="pref_wifi_only_title">Только Wi-Fi</string>
+    <string name="preference_category_about">Версия</string>
+    <string name="preference_category_files">Файлы</string>
+    <string name="preference_header_application">Настройки</string>
+    <string name="preference_home_folder_title">Домашняя папка</string>
+    <string name="preference_version_title">Версия</string>
+    <string name="radio_dialog_description_text_view">Описание:</string>
+    <string name="radio_dialog_name_text_view">Название:</string>
+    <string name="radio_dialog_url_text_view">Url радио:</string>
+    <string name="sort_by_artist">Исполнитель</string>
+    <string name="sort_by_date">Дата</string>
+    <string name="sort_by_name">Название</string>
+    <string name="sort_by_type">Тип</string>
+    <string name="toast_cant_delete_file">Невозможно удалить файл</string>
+    <string name="toast_sd_card_not_found">Карта памяти не найдена</string>
+    <string name="toast_on_swap_mode">Длительное нажатие на элемент и перетаскивание для изменения позиции</string>
+    <string name="rate_dialog_neutral">Позже</string>
+    <string name="rate_dialog_negative">Не показывать</string>
+    <string name="rate_dialog_positive">Оценить</string>
+    <string name="rate_dialog_title">Понравилось приложение?</string>
+    <string name="rate_dialog_message">Если Вам понравилось это приложение, пожалуйста,
+        уделите немного времени, чтобы оценить его. Это займет не больше минуты.
+        Спасибо за Вашу поддержку!</string>
+    <string name="snackbar_sd_card_access">Доступ к карте памяти запрещен</string>
+</resources>

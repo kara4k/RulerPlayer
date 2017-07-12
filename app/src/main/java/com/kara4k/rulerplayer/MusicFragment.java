@@ -182,6 +182,7 @@ public abstract class MusicFragment extends Fragment implements
         mIsViewLoaded = true;
     }
 
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         if (isVisibleToUser && mIsViewLoaded) {
@@ -203,14 +204,14 @@ public abstract class MusicFragment extends Fragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_card_fragment, menu);
+        inflater.inflate(R.menu.menu_music_fragment, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setOnQueryTextListener(this);
 
         mBottomBar = (ActionMenuView) mView.findViewById(R.id.bottom_toolbar);
         Menu bottomMenu = mBottomBar.getMenu();
-        inflater.inflate(R.menu.menu_card_controls, bottomMenu);
+        inflater.inflate(R.menu.menu_music_bottom_controls, bottomMenu);
 
         onBottomBarCreated(bottomMenu);
 
@@ -276,6 +277,9 @@ public abstract class MusicFragment extends Fragment implements
                     item.setIcon(R.drawable.ic_import_export_white_24dp);
                     onSwapModeFinished();
                 }
+                return true;
+            case R.id.menu_item_close_app:
+                getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

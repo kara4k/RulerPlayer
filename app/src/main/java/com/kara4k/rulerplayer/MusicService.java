@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
 public class MusicService extends Service {
 
@@ -48,6 +47,5 @@ public class MusicService extends Service {
         mWakeLock.release();
         NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
         nm.cancel(NotificationManager.NOTIFICATION_ID);
-        Log.e("MusicService", "onDestroy: " + "finished");
     }
 }

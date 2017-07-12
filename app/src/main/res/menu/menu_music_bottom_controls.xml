@@ -4,37 +4,37 @@
     <item
         android:id="@+id/play_btn"
         android:icon="@drawable/ic_play_arrow_white_24dp"
-        android:title="Play"
+        android:title="@string/menu_item_play"
         app:showAsAction="always"
         />
     <item
         android:id="@+id/pause_btn"
         android:icon="@drawable/ic_pause_white_24dp"
-        android:title="Pause"
+        android:title="@string/menu_item_pause"
         app:showAsAction="always"
         />
     <item
         android:id="@+id/stop_btn"
         android:icon="@drawable/ic_stop_white_24dp"
-        android:title="Stop"
+        android:title="@string/menu_item_stop"
         app:showAsAction="always"
         />
     <item
         android:id="@+id/repeat_mode"
         android:icon="@drawable/ic_repeat_one_white_24dp"
-        android:title="Repeat mode"
+        android:title="@string/menu_item_repeat_mode"
         app:showAsAction="always"
         />
     <item
         android:id="@+id/sort_btn"
         android:icon="@drawable/ic_sort_white_24dp"
-        android:title="Sort"
+        android:title="@string/menu_item_sort"
         app:showAsAction="always"
         />
     <item
         android:id="@+id/last_btn"
         android:icon="@drawable/ic_folder_special_white_24dp"
-        android:title="Playlist"
+        android:title="@string/last_btn_playlist"
         app:showAsAction="always"/>
 
 </menu>
