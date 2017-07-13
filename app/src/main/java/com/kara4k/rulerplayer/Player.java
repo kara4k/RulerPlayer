@@ -161,17 +161,6 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         updateNotification(null);
     }
 
-    public void resume() {
-
-        if (mMediaPlayer == null) {
-            return;
-        }
-        if (!mMediaPlayer.isPlaying()) {
-            mMediaPlayer.start();
-            playOnInterrupt = true;
-        }
-    }
-
     public void togglePlayPause() {
         if (mMediaPlayer == null) {
             mPlayerListCallback.repeatCurrent();

@@ -17,7 +17,6 @@ class Preferences {
     private static final String REPEAT_ONE = "repeat_one";
     private static final String SORT_ORDER = "sort_order";
     private static final String PLAYLIST = "playlist";
-    private static final String SHOW_WARNING_DIALOG = "warning_dialog";
 
 
 
@@ -110,16 +109,6 @@ class Preferences {
     public static boolean isDownloadWifiOnly(Context context) {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
         return sp.getBoolean(SettingsFragment.WIFI_ONLY, true);
-    }
-
-    public static void dontShowDialog(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        sp.edit().putBoolean(SHOW_WARNING_DIALOG, false).apply();
-    }
-
-    public static boolean isShowWarningDialog(Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(SHOW_WARNING_DIALOG, true);
     }
 
 

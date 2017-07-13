@@ -55,12 +55,6 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
     }
 
-    protected Fragment getCurrentFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
-        return fragment;
-    }
-
     void replaceFragment(Fragment newFragment) {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.fragment_container, newFragment).commit();

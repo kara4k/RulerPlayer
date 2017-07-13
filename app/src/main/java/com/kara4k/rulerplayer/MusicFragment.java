@@ -499,6 +499,11 @@ public abstract class MusicFragment extends Fragment implements
             sortTrackList();
         }
 
+        @Override
+        protected void onNewItemsSet() {
+            sortTrackList();
+        }
+
         public void sortTrackList() {
             int sortOrder = Preferences.getSortOrder(getContext());
             switch (sortOrder) {

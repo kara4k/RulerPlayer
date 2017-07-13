@@ -133,7 +133,7 @@ public class RadioFragment extends MusicFragment {
 
     }
 
-    private TrackItem createRadioTrack(String radioName, String radioDesc, String radioPath) {
+    public static TrackItem createRadioTrack(String radioName, String radioDesc, String radioPath) {
         TrackItem trackItem = new TrackItem();
         trackItem.setTrackName(radioName);
         trackItem.setTrackArtist(radioDesc);

@@ -123,5 +123,10 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
 
     public void setITEMs(List<ITEM> ITEMs) {
         mITEMs = ITEMs;
+        onNewItemsSet();
+    }
+
+    protected void onNewItemsSet(){
+
     }
 }

@@ -105,7 +105,7 @@ public class PlaylistHolder {
 
 
 
-    static ContentValues getContentValues(TrackItem trackItem, int position) {
+    public static ContentValues getContentValues(TrackItem trackItem, int position) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(Playlist.Cols.NAME, trackItem.getName());
         if (trackItem.getFile() != null) {

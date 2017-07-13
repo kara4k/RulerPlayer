@@ -14,7 +14,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="7dp"
         android:cropToPadding="true"
-        android:src="@drawable/ic_radio_white_24dp"
+        android:src="@drawable/notification_big_icon"
         />
 
     <TextView

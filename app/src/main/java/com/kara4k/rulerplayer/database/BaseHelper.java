@@ -1,11 +1,17 @@
 package com.kara4k.rulerplayer.database;
 
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.kara4k.rulerplayer.database.DbSchemes.*;
+import com.kara4k.rulerplayer.PlaylistHolder;
+import com.kara4k.rulerplayer.RadioFragment;
+import com.kara4k.rulerplayer.TrackItem;
+
+import static com.kara4k.rulerplayer.database.DbSchemes.Playlist;
+import static com.kara4k.rulerplayer.database.DbSchemes.RadioList;
 
 public class BaseHelper extends SQLiteOpenHelper{
 
@@ -59,11 +65,21 @@ public class BaseHelper extends SQLiteOpenHelper{
                 Playlist.Cols.POSITION + " integer)"
         );
 
+        db.insert(RadioList.NAME, null, getExampleRadioValues());
+
+
+
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    private ContentValues getExampleRadioValues(){
+        TrackItem exampleRadio = RadioFragment.createRadioTrack(
+                "ZAYCEV.FM", "Example: 256k", "https://zaycevfm.cdnvideo.ru/ZaycevFM_pop_256.mp3");
+       return PlaylistHolder.getContentValues(exampleRadio, 0);
     }
 }

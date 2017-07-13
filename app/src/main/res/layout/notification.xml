@@ -13,7 +13,7 @@
         android:layout_height="40dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
-        android:src="@drawable/ic_play_arrow_white_48dp"
+        android:src="@drawable/notification_big_icon"
         android:cropToPadding="true"
         />
 
