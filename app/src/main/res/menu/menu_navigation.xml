@@ -14,6 +14,9 @@
             android:icon="@drawable/ic_search_white_24dp"
             android:title="@string/navigation_item_search"
             />
+        <item android:id="@+id/navigation_item_ost"
+              android:icon="@drawable/ic_local_movies_white_24dp"
+              android:title="@string/navigation_item_ost"/>
 
         <item
             android:id="@+id/navigation_item_radio"

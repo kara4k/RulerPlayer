@@ -51,6 +51,9 @@ abstract class SelectableHolder<ITEM extends SearchableItem> extends RecyclerVie
         if (getActionMode() == null) {
             if (!mITEM.isTrack()) return true;
             onLongClick();
+            if (getActionMode() == null) {
+                return true;
+            }
             getActionMode().setTitle("1");
             toggleSelection(view);
         } else {

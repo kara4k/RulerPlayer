@@ -28,6 +28,7 @@ public class SearchFragment extends MusicFragment {
     private int mPage = 1;
     private boolean mIsSearch;
     private boolean mHasMore = true;
+    private boolean mIsIconify = false;
 
 
     public static SearchFragment newInstance() {
@@ -43,24 +44,28 @@ public class SearchFragment extends MusicFragment {
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) {
-                    int itemCount = mLayoutManager.getItemCount();
-                    int lastCompletelyVisible = mLayoutManager.findLastCompletelyVisibleItemPosition();
-                    if (lastCompletelyVisible == itemCount - 1) {
-                        mPage++;
-                        if (mIsSearch) {
-                            if (mHasMore) {
-                                new TracksFetchr().execute(mQuery);
-                            }
-                        } else {
-                            new TracksFetchr().execute();
-                        }
-                    }
-                }
+                onRecyclerViewScrolled(dy);
             }
         });
 
 
+    }
+
+    protected void onRecyclerViewScrolled(int dy) {
+        if (dy > 0) {
+            int itemCount = mLayoutManager.getItemCount();
+            int lastCompletelyVisible = mLayoutManager.findLastCompletelyVisibleItemPosition();
+            if (lastCompletelyVisible == itemCount - 1) {
+                mPage++;
+                if (mIsSearch) {
+                    if (mHasMore) {
+                        new TracksFetchr().execute(mQuery);
+                    }
+                } else {
+                    new TracksFetchr().execute();
+                }
+            }
+        }
     }
 
     @Override
@@ -104,7 +109,14 @@ public class SearchFragment extends MusicFragment {
     }
 
     @Override
-    protected void onBottomBarCreated(Menu menu) {
+    protected void onCreateOptionsMenu() {
+        mSearchView.setIconified(mIsIconify);
+        mIsIconify = true;
+    }
+
+
+    @Override
+    void onBottomBarCreated(Menu menu) {
         MenuItem lastBtn = menu.findItem(R.id.last_btn);
         lastBtn.setTitle(R.string.last_btn_title_search_fragment);
         lastBtn.setIcon(R.drawable.ic_format_list_numbered_white_24dp);

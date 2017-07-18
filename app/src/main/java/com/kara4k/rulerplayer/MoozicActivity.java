@@ -82,6 +82,9 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
             case R.id.navigation_item_search_fragment:
                 replaceFragment(ViewPagerSearchFragment.newInstance());
                 break;
+            case R.id.navigation_item_ost:
+                replaceFragment(ViewPagerOstFragment.newInstance());
+                break;
             case R.id.navigation_item_radio:
                 replaceFragment(ViewPagerRadioFragment.newInstance());
                 break;

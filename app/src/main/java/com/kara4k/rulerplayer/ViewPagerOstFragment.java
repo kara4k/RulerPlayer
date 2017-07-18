@@ -5,22 +5,24 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-public class ViewPagerRadioFragment extends ViewPagerFragment {
+public class ViewPagerOstFragment extends ViewPagerFragment {
 
-    public static ViewPagerRadioFragment newInstance() {
+    public static ViewPagerOstFragment newInstance() {
         Bundle args = new Bundle();
-        ViewPagerRadioFragment fragment = new ViewPagerRadioFragment();
+        ViewPagerOstFragment fragment = new ViewPagerOstFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     FragmentStatePagerAdapter getAdapter() {
-        return new Adapter(getChildFragmentManager()){
+        return new Adapter(getChildFragmentManager()) {
             @Override
-             Fragment getFirstFragment() {
-                return RadioFragment.newInstance();
+            Fragment getFirstFragment() {
+                return OstFragment.newInstance();
             }
         };
     }
+
+
 }

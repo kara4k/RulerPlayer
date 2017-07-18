@@ -3,7 +3,6 @@ package com.kara4k.rulerplayer;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class ViewPagerCardFragment extends ViewPagerFragment {
@@ -18,33 +17,12 @@ public class ViewPagerCardFragment extends ViewPagerFragment {
 
     @Override
     FragmentStatePagerAdapter getAdapter() {
-        return new Adapter(getChildFragmentManager());
-    }
-
-
-    class Adapter extends FragmentStatePagerAdapter {
-
-
-        public Adapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return CardFragment.newInstance();
-                case 1:
-                    return SinglePlayerFragment.newInstance();
-            }
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
+       return new Adapter(getChildFragmentManager()){
+           @Override
+           protected Fragment getFirstFragment() {
+               return CardFragment.newInstance();
+           }
+       };
     }
 
 }

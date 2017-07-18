@@ -37,11 +37,27 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
 
     private void setupActionBar() {
         try {
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setTitle("");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawers();
+                } else {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

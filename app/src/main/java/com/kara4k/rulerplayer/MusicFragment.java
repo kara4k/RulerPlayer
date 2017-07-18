@@ -209,6 +209,8 @@ public abstract class MusicFragment extends Fragment implements
         mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setOnQueryTextListener(this);
 
+        onCreateOptionsMenu();
+
         mBottomBar = (ActionMenuView) mView.findViewById(R.id.bottom_toolbar);
         Menu bottomMenu = mBottomBar.getMenu();
         inflater.inflate(R.menu.menu_music_bottom_controls, bottomMenu);
@@ -227,6 +229,10 @@ public abstract class MusicFragment extends Fragment implements
             });
         }
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    protected void onCreateOptionsMenu(){
+
     }
 
 
@@ -689,6 +695,9 @@ public abstract class MusicFragment extends Fragment implements
 
         @Override
         void onLongClick() {
+            if (mTrackItem instanceof MovieItem) {
+                return;
+            }
             AppCompatActivity activity = (AppCompatActivity) getActivity();
             mActionMode = activity.startSupportActionMode(mModeCallback);
 
@@ -725,6 +734,10 @@ public abstract class MusicFragment extends Fragment implements
             } else {
                 mNameTextView.setText(file.getName());
                 mNameTextView.setLines(1);
+            }
+
+            if (trackItem instanceof MovieItem) {
+                mFolderIconImageView.setVisibility(View.VISIBLE);
             }
 
 
