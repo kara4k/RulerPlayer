@@ -108,7 +108,7 @@ class NotificationManager {
 
 
     private PendingIntent getMainPI() {
-        Intent mainIntent = new Intent(MoozicActivity.newIntent(mContext));
+        Intent mainIntent = new Intent(RulerPlayerActivity.newIntent(mContext));
         return PendingIntent.getActivity(mContext, REQUEST_MAIN_ACTIVITY
                 , mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }

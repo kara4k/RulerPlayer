@@ -58,7 +58,7 @@
     <string name="last_btn_playlist">Playlist</string>
     <string name="cycle_btn_start" translatable="false">Start</string>
     <string name="cycle_btn_finish" translatable="false">Finish</string>
-    <string name="navigation_item_ost">Ost</string>
+    <string name="navigation_item_ost">OST</string>
     <string name="ost_search_view_hint">Movie title</string>
 
 </resources>

@@ -11,9 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.File;
 
-public class MoozicActivity extends DrawerActivity implements CardFragment.CardCallbacks, MusicFragment.ActionModeListener {
+public class RulerPlayerActivity extends DrawerActivity implements CardFragment.CardCallbacks, MusicFragment.ActionModeListener {
 
     private ActivityCallback mActivityCallback;
     private Player mPlayer;
@@ -37,6 +39,9 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
                 new IntentFilter(NotificationManager.NOTIFICATION_ACTIONS));
         mNavigationView.getMenu().getItem(0).setChecked(true);
         new RateManager(this).checkForRateOffer();
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+
     }
 
     @Override
@@ -179,7 +184,9 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
     }
 
     public void setPlayerListCallback(Player.PlayerListCallback playerListCallback) {
-        mPlayer.setPlayerListCallback(playerListCallback);
+        if (mPlayer!= null) {
+            mPlayer.setPlayerListCallback(playerListCallback);
+        }
     }
 
     public class ActionsReceiver extends BroadcastReceiver {
@@ -204,6 +211,6 @@ public class MoozicActivity extends DrawerActivity implements CardFragment.CardC
 
 
     public static Intent newIntent(Context context) {
-        return new Intent(context, MoozicActivity.class);
+        return new Intent(context, RulerPlayerActivity.class);
     }
 }

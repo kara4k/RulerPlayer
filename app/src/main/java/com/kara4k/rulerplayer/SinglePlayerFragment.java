@@ -12,12 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.kara4k.rulerplayer.TrackInfoParser.getDuration;
 
 public class SinglePlayerFragment extends Fragment implements Handler.Callback,
@@ -48,7 +50,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     public void onAttach(Context context) {
         super.onAttach(context);
         Handler handler = new Handler(this);
-        MoozicActivity activity = (MoozicActivity) getActivity();
+        RulerPlayerActivity activity = (RulerPlayerActivity) getActivity();
         mPlayer = activity.getPlayer();
         mPlayer.setSingleFragHandler(handler);
         mPlayer.setPlayerSingleCallback(this);
@@ -57,8 +59,8 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     @Override
     public void onDetach() {
         super.onDetach();
-        MoozicActivity moozicActivity = (MoozicActivity) getActivity();
-        moozicActivity.setActivityCallback(null);
+        RulerPlayerActivity rulerPlayerActivity = (RulerPlayerActivity) getActivity();
+        rulerPlayerActivity.setActivityCallback(null);
         mPlayer.setSingleFragHandler(null);
         mPlayer.setPlayerSingleCallback(null);
     }
@@ -134,6 +136,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         if (isVisibleToUser) {
+            hideSoftKeyboard();
             hideActionBar();
             if (mPlayer != null) {
                 mPlayer.startTracking();
@@ -147,9 +150,16 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
         }
     }
 
+    public void hideSoftKeyboard() {
+        if (getActivity().getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
+    }
+
     private void setActivityCallback() {
-        MoozicActivity moozicActivity = (MoozicActivity) getActivity();
-        moozicActivity.setActivityCallback(new MoozicActivity.ActivityCallback() {
+        RulerPlayerActivity rulerPlayerActivity = (RulerPlayerActivity) getActivity();
+        rulerPlayerActivity.setActivityCallback(new RulerPlayerActivity.ActivityCallback() {
             @Override
             public void onBackPressed() {
             }

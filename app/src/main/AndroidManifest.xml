@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.kara4k.rulerplayer.MoozicActivity"
+            android:name="com.kara4k.rulerplayer.RulerPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"

@@ -6,7 +6,7 @@
     <string name="dialog_sort_by_title">Сортировать по:</string>
     <string name="last_btn_add_radio_title">Добавить радио</string>
     <string name="last_btn_playlist">Плэйлист</string>
-    <string name="last_btn_title_search_fragment">Популярная</string>
+    <string name="last_btn_title_search_fragment">Популярные</string>
     <string name="menu_action_add_to_playlist">Добавить в плейлист</string>
     <string name="menu_action_delete_track">Удалить</string>
     <string name="menu_action_download">Скачать</string>
@@ -56,4 +56,6 @@
         уделите немного времени, чтобы оценить его. Это займет не больше минуты.
         Спасибо за Вашу поддержку!</string>
     <string name="snackbar_sd_card_access">Доступ к карте памяти запрещен</string>
+    <string name="ost_search_view_hint">Название фильма</string>
+    <string name="navigation_item_ost">Саундтреки</string>
 </resources>

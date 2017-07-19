@@ -132,9 +132,9 @@ public abstract class MusicFragment extends Fragment implements
     }
 
     private void setActivityCallback() {
-        MoozicActivity moozicActivity = (MoozicActivity) getActivity();
-        moozicActivity.setPlayerListCallback(this);
-        moozicActivity.setActivityCallback(new MoozicActivity.ActivityCallback() {
+        RulerPlayerActivity rulerPlayerActivity = (RulerPlayerActivity) getActivity();
+        rulerPlayerActivity.setPlayerListCallback(this);
+        rulerPlayerActivity.setActivityCallback(new RulerPlayerActivity.ActivityCallback() {
             @Override
             public void onBackPressed() {
                 if (isMenuVisible()) {
