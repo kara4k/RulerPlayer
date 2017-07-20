@@ -26,7 +26,11 @@ public class KinomaniaFetchr {
 
         addFirstMovie(possible, list);
 
-        Element table = document.getElementsByClass("list-content-item").get(0);
+        Elements tables = document.getElementsByClass("list-content-item");
+        if (tables.size() == 0) {
+            return list;
+        }
+        Element table = tables.get(0);
         Elements items = table.getElementsByClass("list-content-item-inner");
         for (int i = 0; i < items.size(); i++) {
             try {

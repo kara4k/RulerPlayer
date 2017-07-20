@@ -88,7 +88,7 @@ public class OstFragment extends SearchFragment {
                 } else {
                     return KinomaniaFetchr.getMovies(params[0]);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return new ArrayList<>();
@@ -108,7 +108,7 @@ public class OstFragment extends SearchFragment {
         protected List<TrackItem> doInBackground(String... params) {
             try {
                 return KinomaniaFetchr.getTracks(params[0]);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return new ArrayList<>();

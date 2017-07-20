@@ -9,7 +9,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
 import static android.content.Context.AUDIO_SERVICE;
 
@@ -19,6 +18,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     public static final int PROGRESS = 1;
     public static final int BUFFERING = 2;
 
+    private static Player sPlayer;
 
     private final Context mContext;
     private final AudioManager mAudioManager;
@@ -30,6 +30,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     private boolean shouldStop = false;
     private final Player mPlayer;
     private final NotificationManager mNotificationManager;
+
 
     interface PlayerSingleCallback {
         void onPlayTrack(TrackItem trackItem);
@@ -51,18 +52,23 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         void repeatCurrent();
     }
 
+    public static Player getInstance(Context context) {
+        if (sPlayer == null) {
+            sPlayer = new Player(context);
+        }
+        return sPlayer;
+    }
 
-    public Player(Context context) {
+    private Player(Context context) {
         mPlayer = this;
         mContext = context;
         playOnInterrupt = false;
         mAudioManager = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        mContext.registerReceiver(headsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
         mNotificationManager = new NotificationManager(mContext);
-
-
+        mContext.registerReceiver(headsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
     }
+
 
     public void playToggle() {
         if (mMediaPlayer == null) {
@@ -217,6 +223,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
         releaseMediaPlayer();
         mAudioManager.abandonAudioFocus(this);
         mContext.unregisterReceiver(headsetReceiver);
+        sPlayer = null;
     }
 
     private void releaseMediaPlayer() {

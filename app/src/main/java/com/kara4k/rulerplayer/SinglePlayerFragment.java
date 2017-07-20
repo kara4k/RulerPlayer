@@ -50,8 +50,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     public void onAttach(Context context) {
         super.onAttach(context);
         Handler handler = new Handler(this);
-        RulerPlayerActivity activity = (RulerPlayerActivity) getActivity();
-        mPlayer = activity.getPlayer();
+        mPlayer = Player.getInstance(getContext());
         mPlayer.setSingleFragHandler(handler);
         mPlayer.setPlayerSingleCallback(this);
     }

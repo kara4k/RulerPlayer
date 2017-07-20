@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -225,7 +224,7 @@ public class SearchFragment extends MusicFragment {
                     return ZaycevFetchr.getTracks(mPage);
                 }
                 return ZaycevFetchr.getTracks(params[0], mPage);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
