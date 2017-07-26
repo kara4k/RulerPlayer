@@ -13,6 +13,7 @@ class RateManager implements DialogInterface.OnClickListener {
 
 
     private static final String MARKET_URL = "http://play.google.com/store/apps/details?id=";
+    public static final String GITHUB_URL = "https://github.com/kara4k/RulerPlayer/blob/master/README.md";
     private static final String RATE_PREFS = "rate_preferences";
     private static final String LAUNCH_COUNT_KEY = "launch_count";
     private static final String SHOW_DIALOG_KEY = "is_show_dialog";
@@ -106,13 +107,22 @@ class RateManager implements DialogInterface.OnClickListener {
         }
     }
 
-        public void shareApp() {
+    public void shareApp() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.setType("text/plain");
-        String extraText = MARKET_URL.concat(mContext.getPackageName());
+//        String extraText = MARKET_URL.concat(mContext.getPackageName());
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, mContext.getString(R.string.app_name));
-        sendIntent.putExtra(Intent.EXTRA_TEXT, extraText);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, GITHUB_URL);
         mContext.startActivity(sendIntent);
+    }
+
+    public void navigateGitHub() {
+        try {
+            mContext.startActivity(new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(GITHUB_URL)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

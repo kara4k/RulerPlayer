@@ -15,10 +15,15 @@
         app:showAsAction="always"
         />
     <item
+        android:id="@+id/changeable_btn"
+        android:icon="@drawable/ic_folder_special_white_24dp"
+        android:title="@string/last_btn_playlist"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/menu_item_close_app"
         android:icon="@drawable/ic_exit_to_app_white_24dp"
         android:title="@string/menu_item_close_app"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         />
 
 

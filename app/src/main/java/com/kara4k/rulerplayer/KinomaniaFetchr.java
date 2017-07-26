@@ -52,7 +52,7 @@ public class KinomaniaFetchr {
         return list;
     }
 
-    public static final ArrayList<TrackItem> getPopularMovies() throws IOException {
+    public static ArrayList<TrackItem> getPopularMovies() throws IOException {
         Document document = Jsoup.connect(POPULAR_ENDPOINT).get();
         Element table = document.getElementsByClass("bx-mini-slider bx-mini-slider-posters posters--hover").get(0);
         Elements movies = table.getElementsByClass("slide");

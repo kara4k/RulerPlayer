@@ -36,9 +36,14 @@
             android:title="@string/navigation_item_settings"/>
 
         <item
-            android:id="@+id/navigation_menu_rate_item"
-            android:icon="@drawable/ic_star_white_24dp"
-            android:title="@string/navigation_menu_rate"/>
+        android:id="@+id/navigation_menu_github_item"
+        android:icon="@drawable/ic_action_github"
+        android:title="@string/navigation_menu_githhub"/>
+
+        <!--<item-->
+            <!--android:id="@+id/navigation_menu_rate_item"-->
+            <!--android:icon="@drawable/ic_star_white_24dp"-->
+            <!--android:title="@string/navigation_menu_rate"/>-->
         <item
             android:id="@+id/navigation_menu_share_item"
             android:icon="@drawable/ic_share_white_24dp"

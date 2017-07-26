@@ -6,8 +6,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.view.Menu;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +53,8 @@ public class OstFragment extends SearchFragment {
     }
 
     @Override
-    protected void onCreateOptionsMenu() {
-        super.onCreateOptionsMenu();
+    void onOptionsMenuCreate(Menu menu) {
+        super.onOptionsMenuCreate(menu);
         mSearchView.setQueryHint(getString(R.string.ost_search_view_hint));
     }
 

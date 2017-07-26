@@ -39,7 +39,7 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
         registerReceiver(mActionsReceiver,
                 new IntentFilter(NotificationManager.NOTIFICATION_ACTIONS));
         mNavigationView.getMenu().getItem(0).setChecked(true);
-        new RateManager(this).checkForRateOffer();
+//        new RateManager(this).checkForRateOffer();
         FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         firebaseAnalytics.setAnalyticsCollectionEnabled(true);
 
@@ -102,8 +102,11 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
             case R.id.navigation_menu_settings:
                 startActivity(SettingsActivity.newIntent(this));
                 break;
-            case R.id.navigation_menu_rate_item:
-                new RateManager(this).rateApp();
+//            case R.id.navigation_menu_rate_item:
+//                new RateManager(this).rateApp();
+//                break;
+            case R.id.navigation_menu_github_item:
+                new RateManager(this).navigateGitHub();
                 break;
             case R.id.navigation_menu_share_item:
                 new RateManager(this).shareApp();

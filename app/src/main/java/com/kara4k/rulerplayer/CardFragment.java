@@ -137,8 +137,8 @@ public class CardFragment extends MusicFragment
     }
 
     @Override
-    protected void onBottomBarCreated(Menu menu) {
-        mPlaylistBtn = menu.findItem(R.id.last_btn);
+    protected void onOptionsMenuCreate(Menu menu) {
+        mPlaylistBtn = menu.findItem(R.id.changeable_btn);
         setPlaylistBtnIcon();
     }
 

@@ -100,7 +100,7 @@ public abstract class MusicFragment extends Fragment implements
 
     abstract void onSdCardPermissionGranted(int requestCode);
 
-    abstract void onBottomBarCreated(Menu menu);
+    abstract void onOptionsMenuCreate(Menu menu);
 
     abstract void lastButtonPressed();
 
@@ -209,17 +209,18 @@ public abstract class MusicFragment extends Fragment implements
         mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setOnQueryTextListener(this);
 
-        onCreateOptionsMenu();
+        onOptionsMenuCreate(menu);
 
         mBottomBar = (ActionMenuView) mView.findViewById(R.id.bottom_toolbar);
         Menu bottomMenu = mBottomBar.getMenu();
+        if (bottomMenu.size() != 0) {
+            super.onCreateOptionsMenu(menu, inflater);
+            return;
+        }
+
         inflater.inflate(R.menu.menu_music_bottom_controls, bottomMenu);
-
-        onBottomBarCreated(bottomMenu);
-
         boolean isRepeatOne = Preferences.isRepeatOne(getContext());
         setRepeatBtnIcon(isRepeatOne);
-
         for (int i = 0; i < bottomMenu.size(); i++) {
             bottomMenu.getItem(i).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
@@ -229,10 +230,6 @@ public abstract class MusicFragment extends Fragment implements
             });
         }
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    protected void onCreateOptionsMenu(){
-
     }
 
 
@@ -269,7 +266,7 @@ public abstract class MusicFragment extends Fragment implements
             case R.id.sort_btn:
                 showSortDialog();
                 return true;
-            case R.id.last_btn:
+            case R.id.changeable_btn:
                 lastButtonPressed();
                 return true;
             case R.id.menu_item_swap_positions:

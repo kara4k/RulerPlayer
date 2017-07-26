@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -20,7 +19,7 @@ class TrackInfoParser extends HandlerThread {
     private Handler mHandler;
     private final MediaMetadataRetriever mDataRetriever;
 
-    private final Handler mFragmentHandler;
+    private Handler mFragmentHandler;
     private InfoParserCallback mInfoParserCallback;
 
 

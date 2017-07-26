@@ -94,8 +94,8 @@ public class RadioFragment extends MusicFragment {
     }
 
     @Override
-    protected void onBottomBarCreated(Menu menu) {
-        MenuItem lastBtn = menu.findItem(R.id.last_btn);
+    protected void onOptionsMenuCreate(Menu menu) {
+        MenuItem lastBtn = menu.findItem(R.id.changeable_btn);
         lastBtn.setTitle(R.string.last_btn_add_radio_title);
         lastBtn.setIcon(R.drawable.ic_add_white_24dp);
     }

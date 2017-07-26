@@ -5,7 +5,7 @@
     <string name="dialog_delete_files_title">Удалить выбранные файлы</string>
     <string name="dialog_sort_by_title">Сортировать по:</string>
     <string name="last_btn_add_radio_title">Добавить радио</string>
-    <string name="last_btn_playlist">Плэйлист</string>
+    <string name="last_btn_playlist">Плейлист</string>
     <string name="last_btn_title_search_fragment">Популярные</string>
     <string name="menu_action_add_to_playlist">Добавить в плейлист</string>
     <string name="menu_action_delete_track">Удалить</string>
@@ -13,7 +13,7 @@
     <string name="menu_action_edit_radio">Редактировать радио</string>
     <string name="menu_action_remove_from_playlist">Убрать из плейлиста</string>
     <string name="menu_action_select_all">Выбрать все</string>
-    <string name="menu_item_close_app">Закрыть</string>
+    <string name="menu_item_close_app">Выход</string>
     <string name="menu_item_delete_radio">Удалить радио</string>
     <string name="menu_item_pause">Пауза</string>
     <string name="menu_item_play">Играть</string>
@@ -26,7 +26,6 @@
     <string name="navigation_item_radio">Радио</string>
     <string name="navigation_item_search">Поиск</string>
     <string name="navigation_item_settings">Настройки</string>
-    <string name="navigation_menu_rate">Оценить</string>
     <string name="navigation_menu_share">Поделиться</string>
     <string name="pref_category_downloads_title">Загрузка</string>
     <string name="pref_download_folder_title">Папка для скачивания</string>

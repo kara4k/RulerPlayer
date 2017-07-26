@@ -108,17 +108,13 @@ public class SearchFragment extends MusicFragment {
     }
 
     @Override
-    protected void onCreateOptionsMenu() {
-        mSearchView.setIconified(mIsIconify);
-        mIsIconify = true;
-    }
-
-
-    @Override
-    void onBottomBarCreated(Menu menu) {
-        MenuItem lastBtn = menu.findItem(R.id.last_btn);
+    void onOptionsMenuCreate(Menu menu) {
+        MenuItem lastBtn = menu.findItem(R.id.changeable_btn);
         lastBtn.setTitle(R.string.last_btn_title_search_fragment);
         lastBtn.setIcon(R.drawable.ic_format_list_numbered_white_24dp);
+
+        mSearchView.setIconified(mIsIconify);
+        mIsIconify = true;
     }
 
     @Override
