@@ -41,6 +41,8 @@ public abstract class DrawerActivity extends AppCompatActivity implements Naviga
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setShowHideAnimationEnabled(true);
             getSupportActionBar().setTitle("");
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayUseLogoEnabled(false);
         } catch (Exception e) {
             e.printStackTrace();
         }

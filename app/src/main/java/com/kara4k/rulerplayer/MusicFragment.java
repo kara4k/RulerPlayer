@@ -22,6 +22,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -208,6 +209,12 @@ public abstract class MusicFragment extends Fragment implements
         MenuItem searchItem = menu.findItem(R.id.menu_item_search);
         mSearchView = (SearchView) searchItem.getActionView();
         mSearchView.setOnQueryTextListener(this);
+
+        final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        final float screenWidthInDp = displayMetrics.widthPixels / displayMetrics.density;
+        if (screenWidthInDp < 360f) {
+            menu.getItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
 
         onOptionsMenuCreate(menu);
 
