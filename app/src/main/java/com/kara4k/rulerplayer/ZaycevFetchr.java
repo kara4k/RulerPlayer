@@ -2,6 +2,7 @@ package com.kara4k.rulerplayer;
 
 
 import android.net.Uri;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,8 +41,10 @@ class ZaycevFetchr {
             Element nameDiv = element.getElementsByClass("musicset-track__track-name").get(0);
             String trackName = nameDiv.getElementsByTag("a").text();
 
-            String dataUrl = String.format("http://zaycev.net%s", element.attr("data-url"));
+            String info = nameDiv.getElementsByTag("a").attr("href");
+            Log.e("ZaycevFetchr", "parseTracks: " + info);
 
+            String dataUrl = String.format("http://zaycev.net%s", element.attr("data-url"));
             setTrackUrl(trackItem, dataUrl);
 
             trackItem.setTrackName(trackName);
@@ -57,6 +60,26 @@ class ZaycevFetchr {
         }
         return trackItems;
     }
+
+//    private static void dodo(final String infoUrl, int size, final Handler handler) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    Document document = Jsoup.connect(infoUrl).get();
+//                    Element details = document.getElementsByClass("audiotrack__details").get(0);
+//                    String fileSize = details.getElementsByClass("audiotrack__size").text();
+//                    String bitrate = details.getElementsByClass("audiotrack__bitrate").text();
+//                    Log.e("ZaycevFetchr", "run: " + fileSize);
+//                    Log.e("ZaycevFetchr", "run: " + bitrate);
+//                    handler.obtainMessage(1, bitrate).sendToTarget();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+
+//    }
 
     public static List<TrackItem> getTracks(String query, int page) throws IOException {
         List<TrackItem> list = parseTracks(createSearchUrl(query, page));
@@ -96,6 +119,7 @@ class ZaycevFetchr {
             String urlString = getUrlString(dataUrl);
             JSONObject bodyJsonObj = new JSONObject(urlString);
             String filePathUrl = bodyJsonObj.getString("url");
+            Log.e("ZaycevFetchr", "setTrackUrl: " + filePathUrl);
             trackItem.setFilePath(filePathUrl);
         } catch (IOException | JSONException e) {
             trackItem.setFilePath("");

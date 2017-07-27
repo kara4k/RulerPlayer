@@ -139,9 +139,9 @@ public class RadioFragment extends MusicFragment {
         trackItem.setTrackArtist(radioDesc);
         trackItem.setFilePath(radioPath);
         trackItem.setDurationMs(0);
-        trackItem.setDuration(" ");
-        trackItem.setExtension(" ");
-        trackItem.setBitrate(" ");
+        trackItem.setDuration("");
+        trackItem.setExtension("");
+        trackItem.setBitrate("");
         trackItem.setOnline(true);
         trackItem.setHasInfo(true);
         trackItem.setTrack(true);

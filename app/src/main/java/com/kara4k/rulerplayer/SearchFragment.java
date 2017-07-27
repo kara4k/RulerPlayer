@@ -4,16 +4,15 @@ package com.kara4k.rulerplayer;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -29,6 +28,8 @@ public class SearchFragment extends MusicFragment {
     private boolean mHasMore = true;
     private boolean mIsIconify = false;
 
+    private ProgressDialog mProgressDialog;
+    private OnlineTracksParser mOnlineTracksParser;
 
     public static SearchFragment newInstance() {
         Bundle args = new Bundle();
@@ -37,6 +38,25 @@ public class SearchFragment extends MusicFragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mOnlineTracksParser = new OnlineTracksParser(new OnlineTracksParser.TrackParser() {
+            @Override
+            public void onTracksReceived(List<TrackItem> list) {
+                if (list.size() < 20) {
+                    mHasMore = false;
+                }
+                destroyDialog();
+                if (mPage == 1) {
+                    mTracksAdapter.setITEMs(list);
+                } else {
+                    mTracksAdapter.appendItems(list);
+                }
+                mTracksAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     @Override
     void onCreateView() {
@@ -46,7 +66,6 @@ public class SearchFragment extends MusicFragment {
                 onRecyclerViewScrolled(dy);
             }
         });
-
 
     }
 
@@ -58,10 +77,14 @@ public class SearchFragment extends MusicFragment {
                 mPage++;
                 if (mIsSearch) {
                     if (mHasMore) {
-                        new TracksFetchr().execute(mQuery);
+                        showDialog();
+                        mOnlineTracksParser.getTracks(mQuery, mPage);
+//                        new TracksFetchr().execute(mQuery);
                     }
                 } else {
-                    new TracksFetchr().execute();
+                    showDialog();
+                    mOnlineTracksParser.getTracks(mPage);
+//                    new TracksFetchr().execute();
                 }
             }
         }
@@ -102,8 +125,9 @@ public class SearchFragment extends MusicFragment {
         mQuery = text;
         mPage = 1;
         mHasMore = true;
-        new TracksFetchr().execute(text);
         mSearchView.clearFocus();
+        showDialog();
+        mOnlineTracksParser.getTracks(text, mPage);
         return true;
     }
 
@@ -172,7 +196,8 @@ public class SearchFragment extends MusicFragment {
         mHasMore = true;
         mIsSearch = false;
         mPage = 1;
-        new TracksFetchr().execute();
+        showDialog();
+        mOnlineTracksParser.getTracks(mPage);
     }
 
     @Override
@@ -192,70 +217,37 @@ public class SearchFragment extends MusicFragment {
         }
     }
 
-
-    class TracksFetchr extends AsyncTask<String, Void, List<TrackItem>> {
-
-        ProgressDialog mProgressDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mProgressDialog = new ProgressDialog(getContext());
-                    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    mProgressDialog.setMessage("Loading");
-                    mProgressDialog.setCancelable(false);
-                    mProgressDialog.show();
-                }
-            });
-
-        }
-
-        @Override
-        protected List<TrackItem> doInBackground(String... params) {
-            try {
-                if (params.length == 0) {
-                    return ZaycevFetchr.getTracks(mPage);
-                }
-                return ZaycevFetchr.getTracks(params[0], mPage);
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void showDialog() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressDialog = new ProgressDialog(getContext());
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                mProgressDialog.setMessage("Loading");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
             }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<TrackItem> trackItems) {
-
-            try {
-                destroyDialog();
-
-                if (trackItems == null) {
-                    trackItems = new ArrayList<>();
-                }
-
-                if (trackItems.size() < 20) mHasMore = false;
-
-                if (mPage == 1) {
-                    mTracksAdapter.setITEMs(trackItems);
-                } else {
-                    mTracksAdapter.appendItems(trackItems);
-                }
-                mTracksAdapter.notifyDataSetChanged();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void destroyDialog() {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.hide();
-                mProgressDialog = null;
-            }
-        }
+        });
 
     }
+
+    private void destroyDialog() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                    mProgressDialog.hide();
+                    mProgressDialog = null;
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mOnlineTracksParser.clearQueue();
+    }
+
 }

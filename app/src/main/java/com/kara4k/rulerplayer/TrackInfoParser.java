@@ -115,7 +115,11 @@ class TrackInfoParser extends HandlerThread {
         if (bitrate == null) {
             return FILE_CORRUPTED;
         }
-        return String.format("%s kbps", bitrate.replace("000", ""));
+        try {
+            return bitrate.substring(0, bitrate.length()-3);
+        } catch (Exception e) {
+            return bitrate;
+        }
     }
 
     @NonNull

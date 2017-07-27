@@ -37,7 +37,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public abstract class MusicFragment extends Fragment implements
@@ -583,95 +582,22 @@ public abstract class MusicFragment extends Fragment implements
 
 
         public void sortByName() {
-            Collections.sort(mITEMs, new Comparator<TrackItem>() {
-                @Override
-                public int compare(TrackItem trackItem, TrackItem t1) {
-                    if (!trackItem.isTrack() && t1.isTrack()) {
-                        return -1;
-                    } else if (trackItem.isTrack() && !t1.isTrack()) {
-                        return 1;
-                    } else if (!trackItem.isTrack() && !t1.isTrack()) {
-                        return trackItem.getName().compareToIgnoreCase(t1.getName());
-                    } else if (trackItem.getTrackName() != null && t1.getTrackName() != null) {
-                        return trackItem.getTrackName().compareToIgnoreCase(t1.getTrackName());
-                    } else if (trackItem.getTrackName() == null && t1.getTrackName() != null) {
-                        return trackItem.getName().compareToIgnoreCase(t1.getTrackName());
-                    } else if (trackItem.getTrackName() != null && t1.getTrackName() == null) {
-                        return trackItem.getTrackName().compareToIgnoreCase(t1.getName());
-                    } else {
-                        return trackItem.getName().compareToIgnoreCase(t1.getName());
-                    }
-
-                }
-            });
-
+            Collections.sort(mITEMs, TrackSorts.byName());
             Preferences.setSortOrder(getContext(), SORT_BY_NAME);
         }
 
         public void sortByArtist() {
-            Collections.sort(mITEMs, new Comparator<TrackItem>() {
-                @Override
-                public int compare(TrackItem track, TrackItem t1) {
-                    if (!track.isTrack() && t1.isTrack()) {
-                        return -1;
-                    } else if (track.isTrack() && !t1.isTrack()) {
-                        return 1;
-                    } else if (!track.isTrack() && !t1.isTrack()) {
-                        return track.getName().compareToIgnoreCase(t1.getName());
-                    } else if (track.getTrackArtist() != null && t1.getTrackArtist() != null) {
-                        return track.getTrackArtist().compareToIgnoreCase(t1.getTrackArtist());
-                    } else if (track.getTrackArtist() == null && t1.getTrackArtist() != null) {
-                        return -1;
-                    } else if (track.getTrackArtist() != null && t1.getTrackArtist() == null) {
-                        return 1;
-                    } else {
-                        return track.getName().compareToIgnoreCase(t1.getName());
-                    }
-
-                }
-            });
+            Collections.sort(mITEMs, TrackSorts.byArtist());
             Preferences.setSortOrder(getContext(), SORT_BY_ARTIST);
         }
 
         public void sortByType() {
-            Collections.sort(mITEMs, new Comparator<TrackItem>() {
-                @Override
-                public int compare(TrackItem track, TrackItem t1) {
-                    if (!track.isTrack() && t1.isTrack()) {
-                        return -1;
-                    } else if (track.isTrack() && !t1.isTrack()) {
-                        return 1;
-                    } else if (!track.isTrack() && !t1.isTrack()) {
-                        return track.getName().compareToIgnoreCase(t1.getName());
-                    } else if (!track.getExtension().equals(t1.getExtension())) {
-                        return track.getExtension().compareToIgnoreCase(t1.getExtension());
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+            Collections.sort(mITEMs, TrackSorts.byType());
             Preferences.setSortOrder(getContext(), SORT_BY_TYPE);
         }
 
         public void sortByDate() {
-            Collections.sort(mITEMs, new Comparator<TrackItem>() {
-                @Override
-                public int compare(TrackItem track, TrackItem t1) {
-                    if (!track.isTrack() && t1.isTrack()) {
-                        return -1;
-                    } else if (track.isTrack() && !t1.isTrack()) {
-                        return 1;
-                    } else if (!track.isTrack() && !t1.isTrack()) {
-                        return track.getName().compareToIgnoreCase(t1.getName());
-                    } else if (track.getDate() > t1.getDate()) {
-                        return -1;
-                    } else if (track.getDate() < t1.getDate()) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+            Collections.sort(mITEMs, TrackSorts.byDate());
             Preferences.setSortOrder(getContext(), SORT_BY_DATE);
         }
 
@@ -733,7 +659,13 @@ public abstract class MusicFragment extends Fragment implements
                 if (trackItem.isHasInfo()) {
                     setTrackName(trackItem);
                     setTrackDuration(trackItem);
-                    mExtensionTextView.setText(trackItem.getExtension());
+                    if (trackItem.getBitrate() == null || trackItem.getBitrate().equals("")) {
+                        mExtensionTextView.setText(trackItem.getExtension());
+                    } else {
+                        String formatted = String.format(
+                                "%s | %s", trackItem.getExtension(), trackItem.getBitrate());
+                        mExtensionTextView.setText(formatted);
+                    }
                 }
             } else {
                 mNameTextView.setText(file.getName());

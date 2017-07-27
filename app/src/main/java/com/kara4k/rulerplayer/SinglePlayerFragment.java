@@ -238,11 +238,15 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     }
 
     private void setTrackDuration(TrackItem trackItem) {
-        mDurationTextView.setText(trackItem.getDuration());
-        if (trackItem.getDuration().equals(TrackInfoParser.FILE_CORRUPTED)) {
-            mDurationTextView.setTextColor(Color.RED);
-        } else {
-            mDurationTextView.setTextColor(Color.WHITE);
+        try {
+            mDurationTextView.setText(trackItem.getDuration());
+            if (trackItem.getDuration().equals(TrackInfoParser.FILE_CORRUPTED)) {
+                mDurationTextView.setTextColor(Color.RED);
+            } else {
+                mDurationTextView.setTextColor(Color.WHITE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
