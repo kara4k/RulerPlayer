@@ -162,6 +162,12 @@ public abstract class MusicFragment extends Fragment implements
         setHasOptionsMenu(true);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mTracksAdapter.notifyDataSetChanged();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -659,13 +665,7 @@ public abstract class MusicFragment extends Fragment implements
                 if (trackItem.isHasInfo()) {
                     setTrackName(trackItem);
                     setTrackDuration(trackItem);
-                    if (trackItem.getBitrate() == null || trackItem.getBitrate().equals("")) {
-                        mExtensionTextView.setText(trackItem.getExtension());
-                    } else {
-                        String formatted = String.format(
-                                "%s | %s", trackItem.getExtension(), trackItem.getBitrate());
-                        mExtensionTextView.setText(formatted);
-                    }
+                    setBitrateExtension(trackItem);
                 }
             } else {
                 mNameTextView.setText(file.getName());
@@ -674,9 +674,37 @@ public abstract class MusicFragment extends Fragment implements
 
             if (trackItem instanceof MovieItem) {
                 mFolderIconImageView.setVisibility(View.VISIBLE);
+                mExtensionTextView.setVisibility(View.GONE);
             }
 
 
+        }
+
+        private void setBitrateExtension(TrackItem trackItem) {
+            if (!trackItem.isOnline()) {
+                boolean showLocalBitrate = Preferences.isShowLocalBitrate(getContext());
+                if (showLocalBitrate) {
+                    showBitrateExtension(trackItem);
+                } else {
+                    showExtensionOnly(trackItem);
+                }
+            } else if (trackItem.isOnline()) {
+               showBitrateExtension(trackItem);
+            }
+        }
+
+        private void showExtensionOnly(TrackItem trackItem) {
+            mExtensionTextView.setText(trackItem.getExtension());
+        }
+
+        private void showBitrateExtension(TrackItem trackItem) {
+            if (trackItem.getBitrate() == null || trackItem.getBitrate().equals("")) {
+                showExtensionOnly(trackItem);
+            } else {
+                String formatted = String.format(
+                        "%s | %s", trackItem.getExtension(), trackItem.getBitrate());
+                mExtensionTextView.setText(formatted);
+            }
         }
 
 

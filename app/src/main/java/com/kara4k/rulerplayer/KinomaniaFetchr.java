@@ -46,7 +46,6 @@ public class KinomaniaFetchr {
                 list.add(movieItem);
             } catch (Exception e) {
                 e.printStackTrace();
-                continue;
             }
         }
         return list;

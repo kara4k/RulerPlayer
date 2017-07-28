@@ -1,10 +1,10 @@
 package com.kara4k.rulerplayer;
 
 
+import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
+import android.os.Handler;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -16,130 +16,155 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
-class ZaycevFetchr {
+public class ZaycevFetchr {
 
-    private static ArrayList<String> stopArray;
+    private static final String UNKNOWN = "---";
+    private final Uri SEARCH_ENDPOINT = Uri.parse("http://zaycev.net/search.html");
+    private final Uri TOP_ENDPOINT = Uri.parse("http://zaycev.net/top/more.html");
 
-    private static final Uri SEARCH_ENDPOINT = Uri.parse("http://zaycev.net/search.html");
-    private static final Uri TOP_ENDPOINT = Uri.parse("http://zaycev.net/top/more.html");
+    private Handler mHandler;
+    private Context mContext;
 
-    private static List<TrackItem> parseTracks(String url) throws IOException {
+    public ZaycevFetchr(Context context, Handler handler) {
+        mContext = context;
+        mHandler = handler;
+    }
+
+    private void parseTracks(String url) throws IOException {
         Document document = Jsoup.connect(url).get();
-        ArrayList<TrackItem> trackItems = new ArrayList<>();
         Elements tracks = document.getElementsByClass("musicset-track clearfix");
+
+        if (onTracksNotFound(tracks)) return;
+
+        boolean requestSize = Preferences.isRequestSize(mContext);
         for (int i = 0; i < tracks.size(); i++) {
             TrackItem trackItem = new TrackItem();
             Element element = tracks.get(i);
             int durationMs = Integer.parseInt(element.attr("data-duration")) * 1000;
-            String extension = element.attr("data-dkey").split("\\.")[1].toUpperCase();
             String duration = element.getElementsByClass("musicset-track__duration").get(0).text();
             Element artistDiv = element.getElementsByClass("musicset-track__artist").get(0);
             String trackArtist = artistDiv.getElementsByTag("a").text();
             Element nameDiv = element.getElementsByClass("musicset-track__track-name").get(0);
             String trackName = nameDiv.getElementsByTag("a").text();
 
-            String info = nameDiv.getElementsByTag("a").attr("href");
-            Log.e("ZaycevFetchr", "parseTracks: " + info);
-
             String dataUrl = String.format("http://zaycev.net%s", element.attr("data-url"));
-            setTrackUrl(trackItem, dataUrl);
+            setTrackUrl(trackItem, dataUrl, tracks.size());
 
-            trackItem.setTrackName(trackName);
-            trackItem.setTrackArtist(trackArtist);
-            trackItem.setDurationMs(durationMs);
-            trackItem.setDuration(duration);
-            trackItem.setExtension(extension);
-            trackItem.setBitrate("");
-            trackItem.setOnline(true);
-            trackItem.setHasInfo(true);
-            trackItem.setTrack(true);
-            trackItems.add(trackItem);
-        }
-        return trackItems;
-    }
-
-//    private static void dodo(final String infoUrl, int size, final Handler handler) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Document document = Jsoup.connect(infoUrl).get();
-//                    Element details = document.getElementsByClass("audiotrack__details").get(0);
-//                    String fileSize = details.getElementsByClass("audiotrack__size").text();
-//                    String bitrate = details.getElementsByClass("audiotrack__bitrate").text();
-//                    Log.e("ZaycevFetchr", "run: " + fileSize);
-//                    Log.e("ZaycevFetchr", "run: " + bitrate);
-//                    handler.obtainMessage(1, bitrate).sendToTarget();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-
-//    }
-
-    public static List<TrackItem> getTracks(String query, int page) throws IOException {
-        List<TrackItem> list = parseTracks(createSearchUrl(query, page));
-
-        if (page == 1) {
-            if (list.size() < 20) {
-                return list;
+            if (requestSize) {
+                String infoUrl = "http://zaycev.net" + nameDiv.getElementsByTag("a").attr("href");
+                getInfo(infoUrl, trackItem, tracks.size());
             } else {
-                stopArray = new ArrayList<>();
-                for (int i = 0; i < list.size(); i++) {
-                    stopArray.add(list.get(i).getDuration());
-                }
+                trackItem.setExtension("MP3");
+                trackItem.setBitrate("");
             }
-        } else {
-            boolean isEqualsFirstPage = true;
-            for (int i = 0; i < list.size(); i++) {
-                if (!stopArray.get(i).equals(list.get(i).getDuration())) {
-                    isEqualsFirstPage = false;
-                    break;
-                }
-            }
-            if (isEqualsFirstPage) {
-                return null;
-            }
-        }
-        return list;
-    }
 
-    public static List<TrackItem> getTracks(int page) throws IOException {
-        List<TrackItem> list = parseTracks(createTopUrl(page));
-        return list;
-    }
-
-
-    private static void setTrackUrl(final TrackItem trackItem, final String dataUrl) {
-        try {
-            String urlString = getUrlString(dataUrl);
-            JSONObject bodyJsonObj = new JSONObject(urlString);
-            String filePathUrl = bodyJsonObj.getString("url");
-            Log.e("ZaycevFetchr", "setTrackUrl: " + filePathUrl);
-            trackItem.setFilePath(filePathUrl);
-        } catch (IOException | JSONException e) {
-            trackItem.setFilePath("");
+            fillTrackData(trackItem, durationMs, duration, trackArtist, trackName);
         }
     }
 
-    private static String createSearchUrl(String query, int page) {
+    private void fillTrackData(TrackItem trackItem, int durationMs, String duration, String trackArtist, String trackName) {
+        trackItem.setTrackName(trackName);
+        trackItem.setTrackArtist(trackArtist);
+        trackItem.setDurationMs(durationMs);
+        trackItem.setDuration(duration);
+        trackItem.setOnline(true);
+        trackItem.setHasInfo(true);
+        trackItem.setTrack(true);
+    }
+
+    private boolean onTracksNotFound(Elements tracks) {
+        if (tracks.size() == 0) {
+            mHandler.obtainMessage(ZaycevTracksParser.ZERO_LENGTH, 0, 0)
+                    .sendToTarget();
+            return true;
+        }
+        return false;
+    }
+
+    private void getInfo(final String infoUrl, final TrackItem trackItem, final int totalCount) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Document document = Jsoup.connect(infoUrl).get();
+                    Element details = document.getElementsByClass("audiotrack__details").get(0);
+                    String fileSize = details.getElementsByClass("audiotrack__size").text();
+                    String bitrate = details.getElementsByClass("audiotrack__bitrate").text();
+                    String fSize = fileSize.split(" ")[1];
+                    String bRate = bitrate.split(" ")[1];
+                    trackItem.setBitrate(bRate);
+                    trackItem.setExtension(fSize);
+                    sendBitrateReadyMsg();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    trackItem.setBitrate(UNKNOWN);
+                    trackItem.setExtension(UNKNOWN);
+                    sendBitrateReadyMsg();
+                }
+            }
+
+            private void sendBitrateReadyMsg() {
+                if (mHandler != null) {
+                    mHandler.obtainMessage(
+                            ZaycevTracksParser.BITRATE, totalCount, 0, trackItem)
+                            .sendToTarget();
+                }
+            }
+        }).start();
+
+    }
+
+    public void getTracks(String query, int page) throws IOException {
+        parseTracks(createSearchUrl(query, page));
+    }
+
+    public void getTracks(int page) throws IOException {
+        parseTracks(createTopUrl(page));
+    }
+
+
+    private void setTrackUrl(final TrackItem trackItem, final String dataUrl, final int totalCount) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String urlString = getUrlString(dataUrl);
+                    JSONObject bodyJsonObj = new JSONObject(urlString);
+                    String filePathUrl = bodyJsonObj.getString("url");
+                    trackItem.setFilePath(filePathUrl);
+                    sendPathReadyMsg();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    trackItem.setFilePath("");
+                    sendPathReadyMsg();
+                }
+            }
+
+            private void sendPathReadyMsg() {
+                if (mHandler != null) {
+                    mHandler.obtainMessage(
+                            ZaycevTracksParser.FILE_PATH, totalCount, 0, trackItem)
+                            .sendToTarget();
+                }
+            }
+        }).start();
+    }
+
+    private String createSearchUrl(String query, int page) {
         Uri.Builder builder = SEARCH_ENDPOINT.buildUpon()
                 .appendQueryParameter("query_search", query)
                 .appendQueryParameter("page", String.valueOf(page));
         return builder.build().toString();
     }
 
-    private static String createTopUrl(int page) {
+    private String createTopUrl(int page) {
         Uri.Builder builder = TOP_ENDPOINT.buildUpon()
                 .appendQueryParameter("page", String.valueOf(page));
         return builder.build().toString();
     }
 
-    private static byte[] getUrlBites(String urlSpec) throws IOException {
+    private byte[] getUrlBites(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -164,8 +189,12 @@ class ZaycevFetchr {
     }
 
 
-    private static String getUrlString(String urlSpec) throws IOException {
+    private String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBites(urlSpec));
+    }
+
+    public void clearQueue() {
+        mHandler = null;
     }
 
 

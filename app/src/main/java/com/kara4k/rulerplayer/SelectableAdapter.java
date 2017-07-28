@@ -87,7 +87,7 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
         return indexes;
     }
 
-    void selectionChanged(){
+    void selectionChanged() {
 
     }
 
@@ -126,7 +126,14 @@ abstract class SelectableAdapter<SVH extends SelectableHolder, ITEM extends Sear
         onNewItemsSet();
     }
 
-    protected void onNewItemsSet(){
+    public void setITEMs(List<ITEM> ITEMs, boolean isCallOnItemsSet) {
+        mITEMs = ITEMs;
+        if (isCallOnItemsSet) {
+            onNewItemsSet();
+        }
+    }
+
+    protected void onNewItemsSet() {
 
     }
 }

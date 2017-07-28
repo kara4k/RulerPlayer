@@ -195,7 +195,7 @@ public class CardFragment extends MusicFragment
     }
 
     private void showPlaylist() {
-        mTracksAdapter.setITEMs(PlaylistHolder.getInstance(getContext()).getItems());
+        mTracksAdapter.setITEMs(PlaylistHolder.getInstance(getContext()).getItems(), false);
         mTracksAdapter.notifyDataSetChanged();
     }
 

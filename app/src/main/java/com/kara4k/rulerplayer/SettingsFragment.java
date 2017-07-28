@@ -22,10 +22,13 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     public static final String FOLDER_HOME = "home_folder";
     public static final String FOLDER_DOWNLOADS = "download_folder";
     public static final String WIFI_ONLY = "wifi_only";
+    public static final String SHOW_BITRATE = "show_bitrate";
+    public static final String REQUEST_SEARCH_SIZE = "request_search_size";
 
     public static final String UNDEFINED = "-1";
     private static final int REQUEST_HOME_DIR = 1;
     private static final int REQUEST_DOWNLOAD_DIR = 2;
+
     private Preference mHomeFolderPref;
     private Preference mDownloadFolderPref;
 

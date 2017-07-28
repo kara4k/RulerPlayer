@@ -2,6 +2,7 @@ package com.kara4k.rulerplayer;
 
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
@@ -135,6 +136,13 @@ public class OstFragment extends SearchFragment {
                     mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     mProgressDialog.setMessage("Loading");
                     mProgressDialog.setCancelable(false);
+                    mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                            getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    destroyDialog();
+                                }
+                            });
                     mProgressDialog.show();
                 }
             });
@@ -152,10 +160,16 @@ public class OstFragment extends SearchFragment {
         }
 
         public void destroyDialog() {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.hide();
-                mProgressDialog = null;
-            }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.hide();
+                        mProgressDialog = null;
+                    }
+                }
+            });
+
         }
     }
 

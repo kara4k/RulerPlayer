@@ -111,5 +111,15 @@ class Preferences {
         return sp.getBoolean(SettingsFragment.WIFI_ONLY, true);
     }
 
+    public static boolean isRequestSize(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(SettingsFragment.REQUEST_SEARCH_SIZE, true);
+    }
+
+    public static boolean isShowLocalBitrate(Context context) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+        return sp.getBoolean(SettingsFragment.SHOW_BITRATE, true);
+    }
+
 
 }

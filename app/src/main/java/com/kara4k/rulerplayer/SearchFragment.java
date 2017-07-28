@@ -3,9 +3,11 @@ package com.kara4k.rulerplayer;
 
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
@@ -29,7 +31,7 @@ public class SearchFragment extends MusicFragment {
     private boolean mIsIconify = false;
 
     private ProgressDialog mProgressDialog;
-    private OnlineTracksParser mOnlineTracksParser;
+    private ZaycevTracksParser mZaycevTracksParser;
 
     public static SearchFragment newInstance() {
         Bundle args = new Bundle();
@@ -41,7 +43,8 @@ public class SearchFragment extends MusicFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOnlineTracksParser = new OnlineTracksParser(new OnlineTracksParser.TrackParser() {
+        Handler handler = new Handler();
+        mZaycevTracksParser = new ZaycevTracksParser(getContext(), new ZaycevTracksParser.TrackParser() {
             @Override
             public void onTracksReceived(List<TrackItem> list) {
                 if (list.size() < 20) {
@@ -56,6 +59,9 @@ public class SearchFragment extends MusicFragment {
                 mTracksAdapter.notifyDataSetChanged();
             }
         });
+        mZaycevTracksParser.setFragmentHandler(handler);
+        mZaycevTracksParser.start();
+        mZaycevTracksParser.getLooper();
     }
 
     @Override
@@ -78,13 +84,11 @@ public class SearchFragment extends MusicFragment {
                 if (mIsSearch) {
                     if (mHasMore) {
                         showDialog();
-                        mOnlineTracksParser.getTracks(mQuery, mPage);
-//                        new TracksFetchr().execute(mQuery);
+                        mZaycevTracksParser.getTracks(mQuery, mPage);
                     }
                 } else {
                     showDialog();
-                    mOnlineTracksParser.getTracks(mPage);
-//                    new TracksFetchr().execute();
+                    mZaycevTracksParser.getTracks(mPage);
                 }
             }
         }
@@ -127,7 +131,7 @@ public class SearchFragment extends MusicFragment {
         mHasMore = true;
         mSearchView.clearFocus();
         showDialog();
-        mOnlineTracksParser.getTracks(text, mPage);
+        mZaycevTracksParser.getTracks(text, mPage);
         return true;
     }
 
@@ -197,7 +201,7 @@ public class SearchFragment extends MusicFragment {
         mIsSearch = false;
         mPage = 1;
         showDialog();
-        mOnlineTracksParser.getTracks(mPage);
+        mZaycevTracksParser.getTracks(mPage);
     }
 
     @Override
@@ -225,6 +229,13 @@ public class SearchFragment extends MusicFragment {
                 mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 mProgressDialog.setMessage("Loading");
                 mProgressDialog.setCancelable(false);
+                mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                        getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                destroyDialog();
+                            }
+                        });
                 mProgressDialog.show();
             }
         });
@@ -247,7 +258,7 @@ public class SearchFragment extends MusicFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mOnlineTracksParser.clearQueue();
+        mZaycevTracksParser.stopMessages();
     }
 
 }
