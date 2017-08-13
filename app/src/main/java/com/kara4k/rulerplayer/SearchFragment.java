@@ -225,18 +225,22 @@ public class SearchFragment extends MusicFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mProgressDialog = new ProgressDialog(getContext());
-                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                mProgressDialog.setMessage("Loading");
-                mProgressDialog.setCancelable(false);
-                mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                        getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                destroyDialog();
-                            }
-                        });
-                mProgressDialog.show();
+                try {
+                    mProgressDialog = new ProgressDialog(getContext());
+                    mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    mProgressDialog.setMessage("Loading");
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                            getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    destroyDialog();
+                                }
+                            });
+                    mProgressDialog.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -246,9 +250,13 @@ public class SearchFragment extends MusicFragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                    mProgressDialog.hide();
-                    mProgressDialog = null;
+                try {
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        mProgressDialog.hide();
+                        mProgressDialog = null;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

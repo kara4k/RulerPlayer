@@ -98,6 +98,12 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
                     mMediaPlayer.setDataSource(trackItem.getFilePath());
                     mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     mMediaPlayer.prepare();
+                    mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mp.start();
+                        }
+                    });
                     mMediaPlayer.start();
 
                     if (mPlayerSingleCallback != null) {
@@ -180,16 +186,20 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void stop() {
-        if (mMediaPlayer == null) {
-            return;
+        try {
+            if (mMediaPlayer == null) {
+                return;
+            }
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+            if (mPlayerSingleCallback != null) {
+                mPlayerSingleCallback.onStopTrack();
+            }
+            updateNotification(null);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
-        mMediaPlayer.stop();
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-        if (mPlayerSingleCallback != null) {
-            mPlayerSingleCallback.onStopTrack();
-        }
-        updateNotification(null);
     }
 
     public boolean isPlaying() {

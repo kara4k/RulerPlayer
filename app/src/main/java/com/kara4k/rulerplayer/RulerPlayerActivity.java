@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -33,7 +34,6 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPlayer = Player.getInstance(this);
-        startService(MusicService.newIntent(this));
         startService(DestroyService.newIntent(this));
         mActionsReceiver = new ActionsReceiver();
         registerReceiver(mActionsReceiver,
@@ -42,6 +42,11 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
 //        new RateManager(this).checkForRateOffer();
         FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            startService(MusicService.newIntent(this));
+        }
+
 
     }
 
@@ -154,9 +159,11 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
     @Override
     protected void onDestroy() {
         mPlayer.release();
-        stopService(MusicService.newIntent(this));
         stopService(DestroyService.newIntent(this));
         unregisterReceiver(mActionsReceiver);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            stopService(MusicService.newIntent(this));
+        }
         super.onDestroy();
     }
 

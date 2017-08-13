@@ -56,6 +56,12 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRulerCycleView.stopCycle();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         RulerPlayerActivity rulerPlayerActivity = (RulerPlayerActivity) getActivity();
@@ -323,11 +329,7 @@ public class SinglePlayerFragment extends Fragment implements Handler.Callback,
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRulerCycleView.stopCycle();
-    }
+
 
     private void checkPositionInNewThread() {
         new Thread(new Runnable() {

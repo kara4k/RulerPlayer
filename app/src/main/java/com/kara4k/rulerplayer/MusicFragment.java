@@ -155,6 +155,16 @@ public abstract class MusicFragment extends Fragment implements
         });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        RulerPlayerActivity rulerPlayerActivity = (RulerPlayerActivity) getActivity();
+        rulerPlayerActivity.setPlayerListCallback(null);
+        rulerPlayerActivity.setActivityCallback(null);
+        mModeCallback = null;
+        mModeListener = null;
+        mCardCallbacks = null;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
