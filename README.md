@@ -22,8 +22,8 @@ Android Jelly Bean (4.1) and higher
 ![RulerPlayer](/Screenshots/Screenshot_4.png?raw=true "RulerPlayer")
 
 ### Latest build:  
-Version 1.3 (5)  
-[Download APK](https://github.com/kara4k/RulerPlayer/raw/master/apk/RulerPlayer_1.3.apk)
+Version 1.4 (6)  
+[Download APK](https://github.com/kara4k/RulerPlayer/raw/master/apk/RulerPlayer_1.4.apk)
 
 
 
