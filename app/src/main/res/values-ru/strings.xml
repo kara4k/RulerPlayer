@@ -61,4 +61,7 @@
     <string name="pref_request_size_summary">Занимает больше времени для получения информации о найденных треках</string>
     <string name="pref_show_bitrate_title">Показывать битрейт (kbps)</string>
     <string name="pref_show_bitrate_summary">Для локальных медиафайлов</string>
+    <string name="dialog_navigate_button">Открыть</string>
+    <string name="dialog_new_version_title">Новая версия</string>
+    <string name="dialog_new_version_message">Доступна новая версия. Хотите открыть страницу загрузки?</string>
 </resources>

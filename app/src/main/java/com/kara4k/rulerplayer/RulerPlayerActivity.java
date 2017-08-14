@@ -41,14 +41,20 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
                 new IntentFilter(NotificationManager.NOTIFICATION_ACTIONS));
         mNavigationView.getMenu().getItem(0).setChecked(true);
 //        new RateManager(this).checkForRateOffer();
-        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        startFirebase();
+        startDozeService();
+        new VersionChecker(this).checkVersion();
+    }
 
+    private void startDozeService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             startService(MusicService.newIntent(this));
         }
+    }
 
-
+    private void startFirebase() {
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
     }
 
     @Override

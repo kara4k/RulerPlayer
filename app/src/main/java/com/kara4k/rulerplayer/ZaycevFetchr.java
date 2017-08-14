@@ -164,7 +164,7 @@ public class ZaycevFetchr {
         return builder.build().toString();
     }
 
-    private byte[] getUrlBites(String urlSpec) throws IOException {
+    private static byte[] getUrlBites(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -189,7 +189,7 @@ public class ZaycevFetchr {
     }
 
 
-    private String getUrlString(String urlSpec) throws IOException {
+    public static String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBites(urlSpec));
     }
 

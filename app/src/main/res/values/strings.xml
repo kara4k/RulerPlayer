@@ -64,5 +64,8 @@
     <string name="pref_show_bitrate_summary">For local files</string>
     <string name="pref_request_size_title">Request size and bitrate</string>
     <string name="pref_request_size_summary">Takes longer to load tracks info</string>
+    <string name="dialog_new_version_title">New version</string>
+    <string name="dialog_new_version_message">A new version is available. Do you want to navigate download page?</string>
+    <string name="dialog_navigate_button">Navigate</string>
 
 </resources>
