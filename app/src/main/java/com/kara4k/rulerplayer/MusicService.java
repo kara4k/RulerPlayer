@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
 
 public class MusicService extends Service {
 
@@ -40,7 +39,5 @@ public class MusicService extends Service {
     public void onDestroy() {
         super.onDestroy();
         mWakeLock.release();
-        NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
-        nm.cancel(NotificationManager.NOTIFICATION_ID);
     }
 }

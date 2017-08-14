@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -164,6 +165,8 @@ public class RulerPlayerActivity extends DrawerActivity implements CardFragment.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             stopService(MusicService.newIntent(this));
         }
+        NotificationManagerCompat nm = NotificationManagerCompat.from(getApplicationContext());
+        nm.cancel(NotificationManager.NOTIFICATION_ID);
         super.onDestroy();
     }
 

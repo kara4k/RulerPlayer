@@ -23,11 +23,11 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     private final Context mContext;
     private final AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer;
-    private boolean playOnInterrupt;
+    private boolean mPlayOnInterrupt;
     private Handler mSingleFragHandler;
     private PlayerSingleCallback mPlayerSingleCallback;
     private PlayerListCallback mPlayerListCallback;
-    private boolean shouldStop = false;
+    private boolean mShouldStop = false;
     private final Player mPlayer;
     private final NotificationManager mNotificationManager;
 
@@ -62,7 +62,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     private Player(Context context) {
         mPlayer = this;
         mContext = context;
-        playOnInterrupt = false;
+        mPlayOnInterrupt = false;
         mAudioManager = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
         mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         mNotificationManager = new NotificationManager(mContext);
@@ -220,11 +220,11 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
             if (i <= 0 && i != -3) {
                 if (mMediaPlayer.isPlaying()) {
                     pause();
-                    playOnInterrupt = true;
+                    mPlayOnInterrupt = true;
                 }
-            } else if (i > 0 && playOnInterrupt) {
+            } else if (i > 0 && mPlayOnInterrupt) {
                 play();
-                playOnInterrupt = false;
+                mPlayOnInterrupt = false;
             }
         }
     }
@@ -258,15 +258,15 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void startTracking() {
-        shouldStop = false;
+        mShouldStop = false;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!shouldStop) {
+                while (!mShouldStop) {
                     try {
                         if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
                             if (mSingleFragHandler == null) {
-                                shouldStop = true;
+                                mShouldStop = true;
                                 continue;
                             }
                             mSingleFragHandler.obtainMessage(PROGRESS,
@@ -289,7 +289,7 @@ public class Player implements AudioManager.OnAudioFocusChangeListener, MediaPla
     }
 
     public void stopTracking() {
-        shouldStop = true;
+        mShouldStop = true;
     }
 
     public void setSingleFragHandler(Handler singleFragHandler) {

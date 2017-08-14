@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:animateLayoutChanges="true"
                 android:background="@drawable/background"
                 android:orientation="vertical">
@@ -11,16 +11,16 @@
         android:id="@+id/track_name_text_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:ellipsize="end"
         android:layout_marginLeft="@dimen/dimen_default"
         android:layout_marginRight="@dimen/dimen_default"
+        android:layout_marginTop="70dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:lines="3"
         android:paddingLeft="@dimen/dimen_default"
         android:paddingRight="@dimen/dimen_default"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:lines="3"
         android:textColor="@android:color/white"
+        android:textSize="18sp"
         android:textStyle="bold"
         />
 
@@ -28,35 +28,36 @@
         android:id="@+id/artist_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/dimen_default"
-        android:layout_toRightOf="@+id/play_image_button"
         android:layout_below="@+id/track_name_text_view"
+        android:layout_marginBottom="@dimen/dimen_default"
         android:layout_marginRight="@dimen/dimen_default"
-        android:lines="2"
+        android:layout_toRightOf="@+id/play_image_button"
         android:ellipsize="end"
         android:gravity="right"
+        android:lines="2"
         android:paddingRight="@dimen/dimen_default"
-        android:textStyle="italic"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"
+        android:textStyle="italic"/>
 
 
     <com.kara4k.rulerplayer.RulerView
         android:id="@+id/ruler_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:seekbar="@+id/seek_bar"
-        app:is_draw_zero="true"
         android:layout_above="@+id/cycle_layout"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        app:is_draw_zero="true"
+        app:seekbar="@+id/seek_bar"
         />
+
     <com.kara4k.rulerplayer.RulerCycleView
         android:id="@+id/ruler_cycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_above="@+id/seek_bar"
         android:visibility="gone"
-        android:layout_width="match_parent"
-        app:seekbar="@id/seek_bar"
-        android:layout_height="40dp"/>
+        app:seekbar="@id/seek_bar"/>
 
     <SeekBar
         android:id="@+id/seek_bar"
@@ -81,8 +82,8 @@
         android:id="@+id/duration_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_default"
         android:layout_above="@+id/ruler_cycle_view"
+        android:layout_marginTop="@dimen/dimen_default"
         android:orientation="horizontal">
 
         <TextView
@@ -172,15 +173,15 @@
         android:id="@+id/cycle_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone"
         android:layout_above="@+id/play_image_button"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <Button
+            android:id="@+id/start_cycle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/start_cycle_button"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
             android:text="@string/cycle_btn_start"
@@ -190,9 +191,9 @@
 
 
         <Button
+            android:id="@+id/finish_cycle_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/finish_cycle_button"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
             android:text="@string/cycle_btn_finish"
