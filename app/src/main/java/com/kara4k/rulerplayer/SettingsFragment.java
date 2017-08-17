@@ -27,7 +27,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     public static final String UNDEFINED = "-1";
     private static final int REQUEST_HOME_DIR = 1;
-    private static final int REQUEST_DOWNLOAD_DIR = 2;
+    public static final int REQUEST_DOWNLOAD_DIR = 2;
 
     private Preference mHomeFolderPref;
     private Preference mDownloadFolderPref;

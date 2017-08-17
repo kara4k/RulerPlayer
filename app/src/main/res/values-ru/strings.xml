@@ -64,4 +64,5 @@
     <string name="dialog_navigate_button">Открыть</string>
     <string name="dialog_new_version_title">Новая версия</string>
     <string name="dialog_new_version_message">Доступна новая версия. Хотите открыть страницу загрузки?</string>
+    <string name="toast_save_to_default_downloads">Будут сохранены в папку загрузок по умолчанию</string>
 </resources>

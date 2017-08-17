@@ -128,9 +128,8 @@ public class FolderSelectorDialogFragment extends DialogFragment implements Dial
         @Override
         public void onClick(View v) {
             if (mFile.getName().equals("...")) {
-                if (mSelectedDir.getParentFile() == null) {
-                    return;
-                }
+                if (isDownloadInternalParent()) return;
+                if (hasNoParent()) return;
                 mSelectedDir = mSelectedDir.getParentFile();
                 mRecyclerView.setAdapter(new Adapter(CardTracksHolder.getFolders(mSelectedDir)));
             } else {
@@ -138,6 +137,19 @@ public class FolderSelectorDialogFragment extends DialogFragment implements Dial
                 mRecyclerView.setAdapter(new Adapter(CardTracksHolder.getFolders(mFile)));
             }
             mDialog.getDialog().setTitle(mSelectedDir.getPath());
+        }
+
+        private boolean hasNoParent() {
+            return mSelectedDir.getParentFile() == null;
+        }
+
+        private boolean isDownloadInternalParent() {
+            if (getTargetRequestCode() == SettingsFragment.REQUEST_DOWNLOAD_DIR) {
+                if (mSelectedDir.equals(Environment.getExternalStorageDirectory())) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -11,8 +11,10 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
@@ -169,7 +171,26 @@ public class SearchFragment extends MusicFragment {
                     .setTitle(String.format("%s - %s.mp3", trackItem.getTrackArtist(), trackItem.getTrackName()));
             setNetworks(request);
             setDownloadPath(trackItem, request);
-            dm.enqueue(request);
+            try {
+                dm.enqueue(request);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+                showSingleToast(i);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
+                        String.format("%s - %s.mp3", trackItem.getTrackArtist(), trackItem.getTrackName()));
+                dm.enqueue(request);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void showSingleToast(int i) {
+        if (i == 0) {
+            Toast toast = Toast.makeText(getActivity(),
+                    R.string.toast_save_to_default_downloads, Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         }
     }
 
@@ -177,7 +198,8 @@ public class SearchFragment extends MusicFragment {
         String downloadDirPath = Preferences.getDownloadFolder(getContext());
         File downloadDir = new File(downloadDirPath);
         if (downloadDir.exists()) {
-            File file = new File(String.format("%s/%s - %s.mp3", downloadDirPath, trackItem.getTrackArtist(), trackItem.getTrackName()));
+            File file = new File(String.format("%s/%s - %s.mp3", downloadDirPath,
+                    trackItem.getTrackArtist(), trackItem.getTrackName()));
             request.setDestinationUri(Uri.fromFile(file));
         } else {
             request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,
