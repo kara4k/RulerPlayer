@@ -86,7 +86,9 @@ class CardTracksHolder {
             }
         });
 
-        Collections.addAll(list, folders);
+        if (folders != null) {
+            Collections.addAll(list, folders);
+        }
 
         Collections.sort(list, new Comparator<File>() {
             @Override

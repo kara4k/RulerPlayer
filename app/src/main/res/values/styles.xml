@@ -19,10 +19,7 @@
     </style>
 
     <style name="AlertDialogStyle" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="android:textColor">@android:color/white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:background">@color/dialogBackground</item>
-        <!--<item name="colorAccent">@android:color/white</item>-->
         <item name="colorAccent">@android:color/white</item>
 
     </style>
